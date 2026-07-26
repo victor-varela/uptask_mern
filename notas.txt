@@ -1,0 +1,3 @@
+A esta altura ya unimos las carpetas del frontend y backend en el mismo proyecto.
+- Sigo haciendo el frontend desde estas notas.
+- Arreglando el problema de CORS: instalamos npm i cors y su type npm i -D @types/cors. Creamos en el backend dentro de config/cors.ts : ahi configuramos las corsOptions. En server, instanciamos cors y le pasamos las opciones que recien configuramos. Los origins que permitimos van en variables de entorno--las incluimos ahi.
