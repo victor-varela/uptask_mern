@@ -1,3 +1,8 @@
 A esta altura ya unimos las carpetas del frontend y backend en el mismo proyecto.
 - Sigo haciendo el frontend desde estas notas.
 - Arreglando el problema de CORS: instalamos npm i cors y su type npm i -D @types/cors. Creamos en el backend dentro de config/cors.ts : ahi configuramos las corsOptions. En server, instanciamos cors y le pasamos las opciones que recien configuramos. Los origins que permitimos van en variables de entorno--las incluimos ahi.
+1- Una vez enviado el formulario, redireccionamos user a la pag principal--> useNaviagate() entra en accion. HanldeForm tiene que ser async porque hay que crear el proyecto en la DB y eso implica 'esperar' y luego que lo crea redireccionamos.
+2- Mostramos toast para dar info a user de que creo el proyecto.. react-toastify --> npm i react-toastify. Esto tiene el componente 'ToastContainer' y la funcion que lo llama. El componente lo mostramos en el layout, creo que por defecto asume la posicion de la pantalla donde va a mostrar las notificaciones y la funcion la llamamos en donde sea necesario. Tambien hay que importar la hoja css OJO con eso, en la documentacion no vi a primera vista esta importacion de la hoja css que hace el profesor (muy bueno el profe). Mira lo que dice la documentacion sobre donde poner el componente:
+
+Important
+Remember to render the ToastContainer once in your application tree. If you can't figure out where to put it, rendering it in the application root would be the best bet. jejejej no soy el unico con la duda.
