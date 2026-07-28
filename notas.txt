@@ -6,3 +6,24 @@ A esta altura ya unimos las carpetas del frontend y backend en el mismo proyecto
 
 Important
 Remember to render the ToastContainer once in your application tree. If you can't figure out where to put it, rendering it in the application root would be the best bet. jejejej no soy el unico con la duda.
+
+IMPORTANTE: TREMENDO LIO PARA UNIR frontend Y backend EN ESTA CARPETA MADRE-- SE ARMO CON GIT-- RESUMEN:si vas a unir varios repos existentes bajo una carpeta madre, hay que eliminar el .git de cada subrepo antes (o apenas los integrás) — no importa si el motivo para unirlos aparece recién a mitad de camino, como te pasó hoy.
+
+3- Instalamos react-query. Es una herramienta de tanstak query-> hasta ahora no me queda muy claro para que sirve pero creo que es para optimizar las consultas a la DB, cachea datos, etc.. ya lo ire viendo mejor.- npm i @tanstak/react-query/ El argumento del profe es que es un 'proyecto grande' necesita mas ESTRUCTURA y mejor ORDEN-- es una libreria para obtener datos desde un servidor. Esta herramienta nos va a permitir cambiar el codigo en HanldeForm en CreateProjectView el formulario--> OJO- vamos a reemplazar el codigo que tiene esa funcion que se comunica con la API por algo que se llama useMutations °°° que miedo°°°
+
+
+Claude dice:
+Sobre React Query — tu intuición va bien encaminada, te la afino:
+
+No es solo optimización de consultas — es un reemplazo completo de cómo manejás el estado de datos que vienen de un servidor. Hoy, sin React Query, cuando hacés una petición tenés que manejar manualmente:
+
+- ¿Está cargando? → necesitarías un useState(loading)
+- ¿Hubo error? → necesitarías un useState(error)
+- ¿Los datos llegaron? → necesitarías un useState(data)
+- ¿Necesito volver a pedir los mismos datos en otro componente? → tendrías que repetir todo esto
+
+React Query te da todo eso ya resuelto, más:
+
+- Cache automático (si ya pediste los proyectos, no los vuelve a pedir de la nada)
+- Revalidación automática (si volvés a la pestaña, refresca datos viejos solo)
+- Estados de loading/error listos para usar sin armarlos vos

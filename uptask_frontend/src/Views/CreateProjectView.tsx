@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 
 export default function CreateProjectView() {
   //Instanciamos react-hook-form / lo iniciamos con defaultValues
-  const initialValues:ProjectFormData = {
+  const initialValues: ProjectFormData = {
     projectName: "",
     clientName: "",
     description: "",
@@ -19,16 +19,16 @@ export default function CreateProjectView() {
   } = useForm({ defaultValues: initialValues });
 
   //instanciamos navigate
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   //Nuestra funcion de validacion-> se la pasamos a handleSubmit del hookForm que esta en el onSUbmit
-  const handleForm = async (formData:ProjectFormData) => {
+  const handleForm = async (formData: ProjectFormData) => {
     //creamos- Esperamos -> await | asignamos la respuesta de la API a data para pasarla al toast
-   const data= await createProject(formData)
-    //redireccionamos
-    navigate("/")
+    const data = await createProject(formData);
     //notificamos
-    toast.success(data)   
+    toast.success(data);
+    //redireccionamos
+    navigate("/");
   };
   return (
     <>
@@ -44,7 +44,7 @@ export default function CreateProjectView() {
           </Link>
         </nav>
         <form className="mt-10 p-10 bg-white shadow-lg rounded-lg" onSubmit={handleSubmit(handleForm)} noValidate>
-          <ProjectForm errors={errors} register={register}/>
+          <ProjectForm errors={errors} register={register} />
           <input
             type="submit"
             value="Crear Proyecto"
