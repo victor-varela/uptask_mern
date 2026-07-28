@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "es2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "esnext",
+    "types": ["vite/client"],
+    "allowArbitraryExtensions": true,
+    "skipLibCheck": true,
+    "paths": {
+      "@/*":["./src/*"]
+    },
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["src"]
+}
+
+
+
+// PARA MEJORAR LA LEGIBILIDAD SE AGREGO LA @ PARA LOS IMPORTS 
+
+  //CompilerOptions:{
+  
+      //"paths": {
+          //   "@/*":["./src/*"]
+          // },
+//}
+// ASI SE PUEDE APUNTAR A SRC CON @ Y EVITAR IMPORTS CON ../../ "cuando veas @ apunta a src"

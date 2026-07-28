@@ -1,0 +1,293 @@
+Para usar prettier como formater:
+ Creá un archivo .vscode/settings.json en la raíz del proyecto con esto:
+json{
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  }
+}
+
+
+
+BACKEND:
+- Es una hoja en blanco. Hay que decidir cada cosa a instalar a diferencia de Frontend con npm create vit@latest que da una plantilla lista.
+
+1- Se ejecuta npm init --y 'le dice que si a todo y crea package.json por defecto'
+2- Se instalan dependencias: express, -D @types/express, nodemon ts-node, typescript
+3- Se crea carpeta src (es una hoja en blanco) adentro van index.ts y server.ts
+4- Crear el archivo tsconfig.json (es la configuracion de typescript, Le dice al compilador de TypeScript cómo debe trabajar en tu proyecto. Sin ese archivo, TypeScript no sabe qué reglas aplicar.)
+
+    {
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": true,
+    "outDir": "./dist"
+  }
+}
+
+ Esto le dice: "compilá el código a ES6, usá CommonJS, sé estricto, y poné el resultado compilado en la carpeta /dist".
+
+El flujo es asi: Tu código .ts  →  TypeScript lo compila  →  genera .js  →  Node.js ejecuta el .js
+ Node.js no entiende TypeScript directamente, por eso necesita ese paso de compilación intermedio.
+
+ 5- En server.ts instanciamos express
+
+    Sin Express, con Node.js puro
+import http from "http";
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/usuarios" && req.method === "GET") {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ usuarios: [] }));
+  } else if (req.url === "/usuarios" && req.method === "POST") {
+    // más código...
+  }
+  // y así para cada endpoint...
+});
+
+Se vuelve un if/else gigante muy rápido. Vos manejás todo a mano: headers, status codes, parsear el body, etc.
+
+Con Express
+import express from "express";
+const app = express();
+
+app.get("/usuarios", (req, res) => {
+  res.json({ usuarios: [] });
+});
+
+app.post("/usuarios", (req, res) => {
+  // ...
+});
+Mucho más limpio. Express te da:
+
+Routing — organizar endpoints por método y URL
+Middlewares — funciones que se ejecutan antes de llegar al endpoint (autenticación, parsear JSON, logs, etc.)
+req y res mejorados — con métodos útiles como res.json(), req.body, req.params
+
+
+6- En index.ts creamos el puerto donde corre el servidor.
+7- Modificamos en package.json para ver en consola 
+       ( "scripts": {
+            "dev": "nodemon --exec ts-node src/index.ts"
+        },)
+
+
+     El flujo completo cuando arranca la APP:
+ 
+            npm run dev
+                ↓
+            index.ts se ejecuta
+                ↓
+            encuentra el import de server
+                ↓
+            ejecuta server.ts de arriba a abajo:
+                → dotenv.config()   (carga el .env)
+                → connectDB()       (conecta MongoDB)
+                → const app = express()
+                ↓
+            vuelve a index.ts
+                ↓
+            server.listen()  (arranca el servidor)
+  
+
+
+
+8- Crear la DB en MongoDB. MERN stack. Sin la DB los datos se guardarian en memoria local y al reiniciar se pierden. Para ser persistentes deben vivir en una DB. Para visualizar los datos usamos una GUI (graphic user interface) para ello usamos MongoDB COMPASS que es una aplicacion en la compu. IMPORTANTE=== al crear la db en mongo hay que guardar el password que nos da al momento de la creacion en el proyecto en un .env o algo porque sino no la vemos mas la contraseña. En el menu izquiero de mongo busca database access and network y ahi puedes editar la password 'password: Pw9RLYWGNtfmhV1u'
+
+              El flujo completo del stack MERN
+
+                    React (frontend)
+                        ↓ hace peticiones HTTP
+                    Express (backend)
+                        ↓ consulta o guarda datos
+                    MongoDB (base de datos)
+
+En este punto abrimos compass para VER los datos de la DB pero AUN no esta conectado nuestro codigo con MongoDB. Para ello usamos un ODM (object Document Mapper 'transformador/Mapper') === Mongoose.
+
+                  ORM MAPEA OBJETOS (JS: mi codigo al final es JS) A TABLAS (SQL)
+                  ODM MAPEA OBJETOS (JS: mi codigo al final es JS) A DOCUMENTOS JSON (NO SQL)
+
+9- Instalamos mongoose npm i mongoose y doteenv para manejar las variables de entorno. EL .ENV DEBE IR AL MISMO NIVEL QUE EL packageJSON- EL ARCHIVO .ENV DEBE IR AL MISMO NIVEL QUE EL packageJSON- EL ARCHIVO .ENV DEBE IR AL MISMO NIVEL QUE EL packageJSON. IGUAL QUE EL GITIGNORE
+10- Conectar express (mi codigo) con mongoose. Creamos una carpeta config para tener TODAS las configuraciones DB, CORS, Servicio para enviar mails, etc. Dentro de config creamos db.ts y ahi configuro la conexion de express con mongoose.
+
+11- Crear los primeros modelos: la forma que van a tener los datos en la DB. Esta app es un CRM de proyectos por lo que requerimos por cada proyecto cierta informacion (eso es lo que va en el modelo) se puede ir agregando mas informacion al modelo a medida que vamos avanzando. Arrancamos con nombre, cliente y descripcion y luego se puede agregar tareas, archivos, etc. En src creamos la carpeta models y agregamos los modelos.
+
+La arquitectura del proyecto es MVC. Una arquitectura proporciona SEPARACION Y ORDEN, es mas ESCALABLE. Ademas del modelo (datos) contoller (quien consulta y recibe las respuestas del modelo, el que comunica modelo y vista) y la vista (react- Html que muestra los datos) existe el ROUTER (encargado de registrar las URLs o endpoint de la APP) El flujo es asi:
+
+      URL -> controller -> model -> view (json)
+
+Sin el router no hay interaccion porque a partir de la visita a una URL es donde comienza el flujo de la app con el usuario, hasta ahora el flujo era interno de la app, levantar el servidor y conectar la DB.
+
+12- Crear el ROUTER. EN src/routes/projectRoutes.ts
+
+13- Crear la carpeta contollers y ProjectController.ts (es la clase para agrupar en sus metodos los controller) los controladores seran clases, en el proyecto anterior se usaban handlers porque era mas pequeño el proyecto. Luego, como ya se vio, router llama a controller llama a modelo entrega a vista. Por eso EN router importamos el ProjectController. 
+
+    export default algo  →  se importa SIN llaves  →  cualquier nombre
+    export const algo    →  se importa CON llaves  →  debe ser el mismo nombre
+
+14- Creamos la ruta para crear proyectos. Antes hicimos la ruta de obtener todos los proyectos y mockeamos con 'todos los proyectos' en res.send(). Al tener que simular en este punto las entradas del usuario con un json mockeado desde Postman (simular segun el modelo los datos que envia el usuario), hay que HABILITAR le lectura de json en express en server.ts : app.use(express.json());
+
+15- Agregar validacion a los proyectos creados--> express validator. Instalamos: npm i express-validator
+
+      El frontend es opcional. El backend es la autoridad.
+
+Tu API puede ser llamada por:
+
+tu frontend ✅
+Postman
+scripts
+otros sistemas
+usuarios maliciosos
+
+El backend no puede asumir que los datos son correctos.
+
+Usuario escribe
+      ↓
+Frontend valida (rápido) para UX experiencia de usuario
+      ↓
+Envía request
+      ↓
+Backend valida (seguro) Seguridad
+      ↓
+      DB
+
+Para validar en el backend, usamos express validator. Se puede escribir el codigo de express validator tanto en router, controlador y custom Middleware. En este caso lo escribimos en el router.
+
+Ejemplo de como seria en un custom middleware:
+
+
+En un Middleware custom ✅ — válido para validaciones REUTILIZABLES
+typescript// middleware/validateProject.ts
+export const validateProject = [
+  body("projectName").notEmpty(),
+  body("clientName").notEmpty(),
+  handlerInputErrors
+]
+
+// router
+router.post("/", validateProject, ProjectController.createProject)
+
+"""Útil cuando la misma validación se repite en varios endpoints."""
+
+El profe eligió el Router porque es la forma más directa y clara para aprender. En proyectos más grandes se suele mover a middlewares separados para no repetir código.
+
+Creamos carpeta middleware en src/ validation.ts --> este es el que maneja los posibles errores, sin esta funcion validator no hace nada. Esta funcion va ANTES del controller en el router.
+
+Cliente (Postman/React)
+        ↓  petición
+     Endpoint (/api/projects)
+        ↓
+      Router (GET, POST, PUT, DELETE)
+        ↓
+    Controller (lógica)
+        ↓
+       DB (MongoDB)
+        ↓
+    Controller (arma la respuesta)
+        ↓
+Cliente recibe JSON
+
+16-Creamos MODELO DE TAREAS Y CONEXIÓN PROJECT-TASK
+
+   Creamos /models/Task.ts con su Schema, Interface y Modelo (mismo patrón que Project).
+   
+   CAMPOS DEL MODELO TASK:
+   - name, description (básicos)
+   - project: Types.ObjectId  → referencia al proyecto al que pertenece
+   - status: TaskStatus       → estado de la tarea (pending, onHold, inProgress, underReview, completed)
+
+   STATUS DE TAREAS:
+   Se crea un objeto 'diccionario' readonly (as const) con los posibles estados.
+   Luego se deriva el type automáticamente con un truco de TS:
+   type TaskStatus = (typeof taskStatus)[keyof typeof taskStatus]
+   → así si se agrega un status nuevo, solo se modifica el objeto y el type se actualiza solo.
+
+   CONECTAR TASK CON PROJECT (lo más importante):
+   Una tarea pertenece a UN proyecto. Un proyecto puede tener MUCHAS tareas.
+   
+   En Task.ts    → se agrega campo 'project' con ref: 'Project'  (tarea apunta a su proyecto)
+   En Project.ts → se agrega campo 'tasks[]' con ref: 'Task'     (proyecto apunta a sus tareas)
+   
+   El type de tasks en Project usa PopulatedDoc<ITask & Document>[] porque
+   Mongoose puede devolver ese campo como array de IDs O como objetos completos
+   y TypeScript necesita saber que los dos casos son válidos.
+
+17- Creamos las tareas: lo hacemos desde el router projectRoutes porque cada tarea esta ASOCIADA a un Project.Creamos un arhcivo dentro de controllers para TaskController porque esto sí es diferente. 
+
+En POSTMAN, agrupamos los request por su nombre con mayusculas - PROJECT-/ TASK- para mejor orden.
+
+18- Creamos endpoint para Obtener las tareas. Pero este endpoint le falta incluir los 'detalles' del proyecto al cual pertenecen. Si ves en las tareas en project le asignamos un Id no mas que eso. Nos faltan los detalles del proyecto nombre, description, etc... pero para hacerlo usamos algo que se llama POPULATE de mongoose. Es poblacion? | esto es como un JOIN en SQL| 
+
+18- Traemos los 'detalles' del proyecto al que pertenecen las tareas. Aplicamos .populte en el findbyId de obtener tareas.
+19- Actualizamos endpoint de obtener proyecto por Id y le INCLUIMOS las tareas aplicando .populate en el findbyId de getProjectById. Populate es muy muy util para cruzar y relacionar la data entre sí.
+20- Creamos endpoint para obtener una taea por su ID- Util para ver los detalles de una tarea especifica. Cada endpoint que creamos implica su respectiva creacion en POSTMAN que nos hace de cliente mientras tanto.
+| EL ROUTER es el papa de los helados, es lo que mueve la app desde el backend |
+OJO: a medida que modificamos y agregamos validaciones en los controllers, endpoints.. hay que tener MUCHO CUIDADO con la data que vamos probando en postman. lo mejor es BORRAR y Volver a llenar la data 'prueba' de postman.. me paso con el objetcId que tenia diferente type porque habia un registro ANTES de la implementacion de la validacion..
+21- Para limpiar el router y evitar codigo repetido incorporamos router.param()--> esto toma una variable que pasemos en paramas (projectId, etc.. y lo procesa con un handlers o callback) en este caso ya teniamos validateProjectExist en cada endpoint por eso para evitar la repeticion usamos este router.param().Esto es muy importante porque evita que ME OLVIDE de poner el handlers de validacion a medida que vaya creciendo el proyecto---> si ves que algo se repite, busca como comprimirlo y escribir una sola vez! : )
+21- Creamos endpoint para actualizar tareas. OJO que aca TAMBIEN hay que validar que la tarea se corresponda a su proyecto al igual que en getTaskbyID. Aca lo importante es: estamos el controller de TASK. Este endpoint requiere el proyectId que lo estamos validando antes que todo con req.param(). Este param ya viene del cliente. La verificacion es == param de la URL 'proyectID' debe ser igual a la propiedad 'project' que tiene el modelo TASK.
+22- Creamos endpoint para eliminar tarea. OJO--- que hay que Eliminar tanto en TASK como en PROJECT.. lo quise hacer solo sin mirar el video y me di cuenta despues que habia que hacer ambas acciones.. estan relaacionadas.. en Project aplicar un filter porque task en project es un array de Ids y listo. Otra cosa SIEMPRE AL TRABAJAR CON IDS DE MONGO ASEGURAR QUE TENGAN EL MISMO VALOR CON TOSTRING.
+Fijate que importante el middleware validateProject === busca en la DB el id project - verifica si existe y luego lo guarda con el conjuro en la request que despues usamos para actualizar y eliminar desde el controller ya con los datos de project que vienen de la request-
+23- Creamos endpoint para cambiar estado de una tarea. Me llamo la atencion que no valida en el body el valor de la tarea. Nosotros definimos un objecto as const para status en el modelo asi que puede ser que eso nos asegure que no entren status 'maliciosos' en lugar de inProgress que llegue 'terminarTarea' porque eso creo que lo validaremos en el frontend.. sin embargo me llama la atencion // TODO. Lo termine haciendo con express validator en el router como debe ser, vaidar antes del controller con un isIn(['..']).withMessage()
+24- Refactorizamos el codigo que se repite en los controllers == validar si la tarea existe== lo 'encapsulamos' en un middleware y usamos el router.param() para invocarlo. OJO las referencias de task y project ahora vienen de req
+25- Refactorizamos codigo repetido en TaskController: la verificacion de que la tarea pertenece al proyecto correcto. Usamos el router.param() en otra linea.. es buenisimo ese router.param() Ese middleware lo escribimos en el archivo task.ts de la carpeta middleware
+
+## 🗺️ Mapa mental del backend — El esqueleto universal (repaso conceptual)
+> No es sobre memorizar código — es el orden lógico que sigue CUALQUIER backend, en cualquier
+> lenguaje o framework. El código cambia, esta secuencia no.
+
+```
+1. FUNDACIÓN           → Node + TypeScript + Express
+                          "Necesito un programa que escuche peticiones HTTP"
+
+2. CONEXIÓN A DATOS     → MongoDB + Mongoose
+                          "Necesito que los datos sobrevivan a un reinicio"
+
+3. FORMA DE LOS DATOS   → Modelos (Schema + Interface)
+                          "Necesito definir qué ES un Proyecto, qué ES una Tarea"
+
+4. ENTRADA A LA APP     → Router
+                          "Necesito puertas — URLs — para que el mundo interactúe"
+
+5. LÓGICA DE NEGOCIO    → Controllers
+                          "Necesito decidir qué pasa cuando tocan esa puerta"
+
+6. CONFIANZA CERO       → Validaciones (express-validator + Mongoose enum)
+                          "Nunca confío en lo que entra desde afuera"
+
+7. RELACIONES           → populate() + IDs cruzados
+                          "Un Proyecto tiene Tareas, una Tarea pertenece a un Proyecto"
+
+8. REPETIR SIN REPETIR  → Middlewares + router.param()
+                          "Si algo se repite 3 veces, lo encapsulo una vez"
+
+9. LA PUERTA DE SALIDA  → CORS (próximo: video 494)
+                          "Dejo que el frontend le hable a esta fortaleza"
+```
+/**
+ * PROBLEMA: querySrv ECONNREFUSED al conectar con mongodb+srv://
+ * 
+ * CAUSA: El formato mongodb+srv:// requiere que Node.js haga una consulta DNS 
+ * especial (tipo SRV) para descubrir los servidores del cluster antes de conectar.
+ * Esa consulta específica fallaba en mi red (datos móviles), aunque:
+ *   - El DNS normal SÍ resolvía el dominio (confirmado con nslookup)
+ *   - El puerto 27017 SÍ estaba abierto (confirmado con Test-NetConnection)
+ * El problema era puntual de esa consulta SRV, no de la red en general.
+ * 
+ * SOLUCIÓN: Cambiar de formato SRV (mongodb+srv://) a formato estándar 
+ * (mongodb://) con los 3 hosts del cluster escritos explícitamente. 
+ * Este formato NO necesita la consulta DNS especial — se conecta directo 
+ * a los hosts, evitando el paso que fallaba.
+ * 
+ * Para obtener el string en formato estándar: Atlas → Cluster → Connect → 
+ * Drivers (en vez del que aparece por defecto en "Compass" que usa +srv)
+
+
+ 1. Whitelist de IP (Network Access en Atlas) == Tuve que agregar la IP del celular
+   → sin esto, Atlas rechaza la conexión sin importar el formato del string
+   → ya lo habías resuelto antes, agregando tu IP de datos móviles
+
+2. Formato de connection string (SRV → estándar)
+   → sin esto, ni siquiera se llegaba a intentar conectar
+   → fallaba antes, en el paso de resolución DNS especial
+ */

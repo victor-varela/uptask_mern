@@ -1,0 +1,62 @@
+npm create vite@latest    → genera TODA la estructura del proyecto (carpetas, 
+                             componentes, config) — no solo el package.json
+
+npm install                → lee el package.json y descarga las dependencias 
+                             listadas a node_modules
+Relación con el backend:
+Backend                          Frontend
+────────────────────────────────────────────────────────
+npm init -y                      npm create vite@latest
+→ hoja en blanco                 → plantilla lista con andamiaje
+
+npm install <paquete>            (mismo comando, mismo efecto)
+→ agrega la dependencia          
+  automáticamente al 
+  package.json + la descarga
+  a node_modules
+  
+Lo clave para recordar:
+El package.json casi nunca se edita a mano — cada npm install <algo> lo modifica solo, agregando esa línea a dependencies o devDependencies. La única excepción real fue el bloque "scripts", que sí escribiste vos manualmente en el backend para definir el comando dev.
+Es el mismo patrón en los dos mundos: el archivo describe qué necesita el proyecto, node_modules es donde realmente vive ese código descargado.
+
+1- Limpiamos el scaffolding de vite
+
+2- Instalamos tailwindcss (lo hice siguiendo la documentacion de la pag de tailwindcss.. al 10-07-26) OJOOO EL PROFE USO tailwindcss VERSION 3 PORQUE COMPARTE UNOS componentes que usan esa version, puede haber conflictos mas adelante.. divino!
+
+3- Instalamos react-router-dom y Creamos el ROUTER: al igual que en el backend creo que el router es el que mueve la pelota es lo que anima la app, es el DIRECTOR. El router recibe las peticiones y activa la app. Lo hacemos en src/ router.tsx
+4- Damos estilos a AppLayout, vemos que el logo lo vamos a usar en varias vistas por eso lo hacemos un componente. Tienes las referencias_ui.
+- Para evitar colocar ../../../ en las importaciones - los 'imports' instalamos y configuramos una dependencia de desarrollo de node--> node:url en vite.config.ts y ts.config.app.json hacemos unos cambios para reemplazar los imports que empiecen con ../ por @ es decir cuando veas @ le mandamos a buscar en src y la carpeta correspondiente... es medio embole pero supuestamente para mayor orden. Para instalar es npm i -D @types/node. A esto se le conoce como PATH ALIASES
+5- Instalamos headlessui y heroicons para los estilos y componentes que nos da el profesor ej menu hamburguesa en AppLayout: npm i @headlessui/react @heroicons/react
+6- Guardamos el gist en components/NavMenu
+7- Creamos en dasboardView un enlace para crear nuevos proyectos-> 
+8- Instalamos react-hook-form es de las 'novedades' del proyecto. Una forma distinta a manejar fomrularios al proyecto anterior de productos que usaba la version data apis de react-router-dom con actions y loaders que estan escritos en el router mismo. --> npm i react-hook-form | Ahora empezamos a trabajar en el -FOMRULARIO- pieza clave- Si se repite algo 3 veces hay que encapsular, eso con un componente, vista, layout, etc... en el proyecto anterior de productos tambien usamos react-router-dom pero las utilidades de actions loaders, etc... y el anidado de las rutas en lugar de Route lo hicimos con children: [  ]... fijate las diferencias por las dudas. Aca usamos para el formulario el react-hook-form (esto creo que si es nuevo.)| No, no es nuevo-- lo hicimos en el proyecto de pacientes con zustand, ahi esta la explicacion paso a paso de react-hook-form. En realidad usamos un -HOOK--> useForm para extraer sus funciones register, handleSubmit, errors del formState (en este caso errors es un objeto pero lo instanciamos para manejar los errores en los inputs del formulario). Hay muchoas mas hooks en react-hook-form-- la documentacion es buena.
+
+- Una buena idea seria pedirle a la IA que analice todos los proyectos y de un informe de que tipo de proyecto es (CRM,ERP, etc.. eje de proyectos similares de la vida real o mas comerciales) que tecnologias usan por que?, como manejan el estado por que? como es la arquitectura del Frontend y backend por que? etc.. para tener los conceptos.
+9- Creamos el componente ErrorMessage y ahi mismo dentro de components una carpeta projects para poner los componentes relacionados solo a projects-- los otros son mas genericos de la app (NavMenu, Logo, etc). En este punto notamos que el type del formulario (projectName, clientName, description) se requiere en varias partes del codigo y se esta repitiendo, por eso hay que crear su propio type-
+- El profesor usó Zod para crear el type de project que vemos que se repite en varias partes de la app. Creo que pudo haber usado simplemente type sin Zod (/types/index.ts/ -> export type ProjectForm ={clientName:string, projectName:string, description:string}) pero SABIENDO que vamos a validar con ZOD las respuestas de la API lo cual implica crear schemas ya aprovecho y de una vez me valgo de Zod (del schema que hago con Zod) para usarlo como TYPE. Incluso lo hice asi y funcionó.. pero usando ZOD ya aprovecho y mato 2 pajaros de 1 tiro.
+- Instalamos ZOD npm i zod--> por ESO creamos la carpetas types y no de Schemas en src, para aprovechar que zod infiere types y ya creamos schemas.
+10- Instalamos Axios, lo configuramos en la carpeta lib/axios.ts
+11- Creamos carpeta api para agrupar los llamados a la api tambien se pudo haber llamado services/ProjectApi.ts--> ahi creamos las funciones que se comunican con backend.
+
+POR QUE VALIDAR EN Frontend y Backend?:
+
+Solo backend (sin validar en frontend)
+     ↓
+Usuario llena mal un campo
+     ↓
+Hace submit → viaja al servidor → servidor responde error
+     ↓
+Usuario ve el error recién DESPUÉS de esperar la respuesta de red
+     ↓
+Mala experiencia — lento, sin feedback inmediato
+
+Con frontend + backend
+     ↓
+Usuario llena mal un campo
+     ↓
+React detecta el error AL INSTANTE, sin tocar la red
+     ↓
+Usuario corrige antes de gastar un solo request
+
+- En este punto vamos a conectar el formulario con la DB a traves de axios (lo que nos permite hacer peticiones HTTP) en el frontend y Express en el backend hacia MongoDB
+- UNIFICAMOS Frontend y Backend en un solo proyecto uptask_mern: ahi tenemos ambos proyectos unidos.
