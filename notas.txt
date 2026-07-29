@@ -27,3 +27,5 @@ React Query te da todo eso ya resuelto, más:
 - Cache automático (si ya pediste los proyectos, no los vuelve a pedir de la nada)
 - Revalidación automática (si volvés a la pestaña, refresca datos viejos solo)
 - Estados de loading/error listos para usar sin armarlos vos
+
+4- Implementamos useMutations en CreateProjectView
