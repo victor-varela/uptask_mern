@@ -29,3 +29,19 @@ React Query te da todo eso ya resuelto, más:
 - Estados de loading/error listos para usar sin armarlos vos
 
 4- Implementamos useMutations en CreateProjectView
+
+Todo esto es la ABSTRACCION, el codigo repetitivo se vuelve libreria :
+
+Mongoose         → abstrae los comandos nativos de MongoDB
+Express           → abstrae el manejo crudo de HTTP (sockets, headers a mano)
+react-hook-form   → abstrae la recolección manual de valores de inputs
+React mismo        → abstrae la manipulación directa del DOM
+JavaScript         → abstrae el manejo de memoria (a diferencia de C)
+
+Cada vez que aparece una librería nueva, preguntate SOLO:
+1. ¿Qué problema resuelve? (en una frase)
+2. ¿Qué le doy yo? (el input — mi función, mis datos)
+3. Qué me devuelve? (el output — el objeto armado, el estado, etc.)
+4. ¿Cómo se vería a mano, sin la librería? (mental, no escribirlo)
+
+5- Implementamos useQuery en DashboardView--> para hacer consultas (get) --> useQuery | para el resto (post, put, patch, delete) --> useMutation.

@@ -64,6 +64,10 @@ export class ProjectController {
     const project = new Project(req.body);
     // console.log(req.body);
 
+    if(true){
+      const error = new Error('Proyecto no encontrado')
+      return res.status(404).json({error:error.message})
+    }
     try {
       //Despues lo guardamos
       await project.save();

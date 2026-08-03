@@ -25,7 +25,8 @@ export default function CreateProjectView() {
   //Usamos Mutations para hacer el POST- creamos la variable mutate que viene en las propiedades de useMutation, del lado derecho tenemos que definir al menos la funcion que maneja la mutation (POST) en este caso y tambien onError y onSuccess
   const {mutate} = useMutation({
     mutationFn: createProject,
-    onError:()=>{
+    onError:(error)=>{
+      toast.error(error.message)
 
     },
     onSuccess:(data)=>{
@@ -37,7 +38,7 @@ export default function CreateProjectView() {
 
   });
 
-  //Nuestra funcion de validacion-> se la pasamos a handleSubmit del hookForm que esta en el onSUbmit
+  //función que recibe los datos ya validados y dispara la creación del proyecto-> se la pasamos a handleSubmit del hookForm que esta en el onSUbmit- toma los datos que user ingreso en el formulario una vez que pasaron la validacion-(formData)-- ya limpios... los procesó handleSubmit..
   const handleForm = async (formData: ProjectFormData) => mutate(formData)
   return (
     <>
@@ -68,7 +69,7 @@ export default function CreateProjectView() {
 /**
  * El formulario es un componente porque aparece en Creacion 'C' - Edicion 'U' asi que va en un componente. En cambio el form de esta vista lleva a un endpoint de la API-> crearProyecto y eso va a usar una handleSubmit diferente en la vista de editar proyecto. Lo que va a ser IGUAL en el fomrulario son los CAMPOS por eso se hace un componente de los CAMPOS del formulario que lo da el profe en un gist.
  * 
- * Usamos reac-hook-form: usamos register-> para registrar cada input | handleSubmit -> para ejectura si pasa la validacion | formState-> ahi estan los errores. En form HTML le pasamos en el evento onSubmit la funcion del HOOK handleSubmit y DENTRO de esa funcion NUESTRA funcion de validacion, de esa forma conectamos nuestra validacion con el submit a reack-hook-form. el novalidate en form es para desactivar la validacion de html5- lo haremos con hook-form
+ * Usamos reac-hook-form: usamos register-> para registrar cada input | handleSubmit -> para ejectura si pasa la validacion | formState-> ahi estan los errores. En form HTML le pasamos en el evento onSubmit la funcion del HOOK handleSubmit y DENTRO de esa funcion NUESTRA función que recibe los datos ya validados y dispara la creación del proyecto, de esa forma conectamos nuestra validacion con el submit a reack-hook-form. el novalidate en form es para desactivar la validacion de html5- lo haremos con hook-form
  * 
  * 
  * El flujo completo, paso a paso:
@@ -91,7 +92,7 @@ useForm() (el hook de react-hook-form) te da handleSubmit — una función espec
    b. Los arma en UN SOLO objeto: { projectName: "...", clientName: "...", description: "..." }
    c. Corre las validaciones (required, etc.)
    d. Si todo pasa validación → LLAMA a tu handleForm, pasándole
-      ese objeto armado como argumento
+      ese objeto armado como argumento---> por eso es que en la declaracion de la funcion escribimos el parametro formData y su respectivo tipo para que Ts sepa su tipo y FINALMENTE lo necesitamos al objeto ese porque es el que vamos a pasarle a mutation (react-query) con la fn createProject (axios)<---- EN OTRAS PALABRAS: la función se declara sabiendo de antemano qué forma va a tener el objeto que va a recibir (ProjectFormData — con projectName, clientName, description), y ese mismo objeto, sin transformarlo, se lo pasa directo a mutate para que dispare la petición HTTP.
 5. Tu handleForm recibe ese objeto y lo nombra "formData"
    (vos elegiste ese nombre — podría llamarse "x" y funcionaría igual,
    el NOMBRE del parámetro es arbitrario, lo que importa es la FORMA
@@ -115,4 +116,33 @@ useForm() (el hook de react-hook-form) te da handleSubmit — una función espec
  * 
  * nota que se puede usar la funcion mutate y mutateAsync---> estan en la doc.. usamos mutate porque es 'menos codigo' y ya react-query sabe que es asincrono.
  *
- */
+ * 
+ * Usuario hace submit
+      ↓
+handleSubmit (react-hook-form) → RECOLECTA + VALIDA
+      ↓ (solo si es válido)
+handleForm (tu código)          → EJECUTA la acción (llama a mutate)
+      ↓
+mutate (react-query)             → HACE la petición HTTP real
+      ↓
+onSuccess (react-query)          → REACCIONA al resultado (toast + navigate)
+ * 
+ * LEER LOS MENSAJES DE ERROR DE LA API EN NUESTRA MUTATION:
+ *  a pesar de que en esta vista en especifico no tenemos un mensaje de error de la api porque es para CREAR un proyecto, ya se adelanta el codigo del useMutation / onError()=> para leer y mostrar los mensajes que tenemos en la api para los otros endpoints. el profe hardcodeo el controller para que entre en error en el endpoint de createProject y asi mostrar el mensaje de error en esta vista, lo uso para ejemplo-- tal vez lo mejor hubiera sido escribir el codigo de onError en la vista que de verdad tire error porque cuando creas un proyecto si no pasa la validacion del hook-form ya esta no te lanza un error, es asi? >> Respuesta: puede fallar por muchas otras razones no nada mas validar el formulario asi que SI esta bien que se haga aca:
+ *      Formulario 100% válido (pasó hook-form sin problema)
+     ↓
+mutate(formData) se dispara → viaja al backend
+     ↓
+Puede fallar igual por:
+  - Se cayó la conexión a internet en ese instante
+  - El servidor está caído (backend no responde)
+  - Token de sesión expiró (si ya hubiera auth en este punto)
+  - El servidor devuelve un 500 por un bug interno
+  - Una validación del LADO DEL BACKEND que el frontend no
+    replica (ej: "ya existe un proyecto con ese nombre exacto"
+    — algo que hook-form no puede saber sin consultar la DB)
+ * 
+ * Para leer los errores de la api usamos la propiedad response que devuelve axios-- en response.data esta lo que escribimos nosotros en nuestra API-- res.status(404).json({error:error.mesagge})--> por eso para leer el mensaje, en ProjectApi recuperamos error.response.data.error ---> y esto se lo pasa a onError y al toast para notificar.
+ * 
+ * 
+ *  */

@@ -1,6 +1,17 @@
+import { getProjects } from "@/api/ProjectAPI";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 
 export default function DashboardView() {
+  //Implementamos useQuery->
+  const {data, isLoading} =useQuery({
+    queryKey:['projects'],
+    queryFn: getProjects
+  })
+
+  if (isLoading) return 'cargando...'
+  console.log(data);
+  
   return (
     <>
       <h1 className="text-5xl font-black">Mis proyectos</h1>
@@ -24,6 +35,7 @@ export default function DashboardView() {
  * Usamos Link de react-router-dom para llevar a otra pagina- De nuevo, el router es quien manda-- cada link en una view debe estar en el router-- asi es la dinamica: hacemos una vista-> presentamos datos-> capturamos datos-> llevamos a otra pagina(ROUTER), etc etc Aca llevo a user a CREAR PROYECTO, seguramente cuando hayan proyectos van a aparecer aqui pero siguiendo el CRUD primero es CREAR-
  * La cuestion es saber diferenciar CUANDO crear un vista--> aca llevamos a user a una pagina asi que tal vez se puede decir que si llevamos a un lugar eso lo tenemos que crear como vista y lo hacemos en las carpetas correspondientes Views/CreateProjectView.tsx
 
+- Para consultar a la API con useQuery tenemos que pasar la queryKey que es lo Escencial de esta herramienta useQuery porque esa key permite cachear en memoria del cliente lo que trae esa consulta a la api por lo cual te ahorras un monton de consultas y es mas veloz para trabajar esos datos en la app. Es una key unica para cada consulta, es excelente una gran ventaja tenerlo. Despues definimos la funcion que va a manejar la consulta a al api : getProjects que la definimos en ProjectApi.
 
 
 
