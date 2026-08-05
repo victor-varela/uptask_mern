@@ -11,6 +11,16 @@ export const projectSchema =z.object({
     description: z.string()
 })
 
+//Creamos schema para DasboardView--> vamos a validar que la api nos devuelve un ARRAY con los campos y los types correctos
+export const dashboardViewSchema = z.array(
+    projectSchema.pick({
+        _id:true,
+        projectName:true,
+        clientName:true,
+        description:true
+    })
+)
+
 export type Project = z.infer<typeof projectSchema>
 export type ProjectFormData = Pick<Project, 'clientName' | 'projectName' | 'description'>
 
@@ -22,7 +32,7 @@ export type ProjectFormData = Pick<Project, 'clientName' | 'projectName' | 'desc
  * FIjate que por un lado hicimos el schema --> a partir de ese schema CREAMOS el TYPE con z.infer y creamos 2 types a partir del MISMO schema ya que cuando se crea un proyecto no tienes el id definido por eso el PICK y por eso 2 types con diferente nombre--> bellisimo...
  * Sintaxis de pick<unTYPE ya lo habia definido antes 'Project', 'campos' | > 
  * 
- * 
+ * La definiicion del schema de dashboardView usa la base del schema de un project que habiamos escrito primero y 'elegimos' pick las propiedades que va a tomar de él.. son todas.. pero este schema es un ARRAY. por ello la necesidad de escribirlo. Esto lo vamos a usar en la llamada a la API en ProjectApi.ts ahi cuando recibimos la respuesta de la API, la pasamos por este schema y luego RETORNAMOS si todo esta bien
  * 
  * 
  * 

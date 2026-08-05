@@ -4,29 +4,39 @@ import { Link } from "react-router-dom";
 
 export default function DashboardView() {
   //Implementamos useQuery->
-  const {data, isLoading} =useQuery({
-    queryKey:['projects'],
-    queryFn: getProjects
-  })
+  const { data, isLoading } = useQuery({
+    queryKey: ["projects"],
+    queryFn: getProjects,
+  });
 
-  if (isLoading) return 'cargando...'
-  console.log(data);
-  
-  return (
-    <>
-      <h1 className="text-5xl font-black">Mis proyectos</h1>
+  if (isLoading) return "cargando...";
 
-      <p className="text-2xl font-light text-gray-500 mt-5">Administra tus proyectos</p>
-      <nav className="my-5">
-        <Link
-          className="bg-purple-400 hover:bg-purple-500 cursor-pointer text-2xl text-white font-bold px-10 py-3"
-          to="/projects/create"
-        >
-          Crear Proyecto
-        </Link>
-      </nav>
-    </>
-  );
+  if (data)
+    return (
+      <>
+        <h1 className="text-5xl font-black">Mis proyectos</h1>
+
+        <p className="text-2xl font-light text-gray-500 mt-5">Administra tus proyectos</p>
+        <nav className="my-5">
+          <Link
+            className="bg-purple-400 hover:bg-purple-500 cursor-pointer text-2xl text-white font-bold px-10 py-3"
+            to="/projects/create"
+          >
+            Crear Proyecto
+          </Link>
+        </nav>
+        {data.length ? (
+          <p>Si hay proyectos</p>
+        ) : (
+          <p className="text-center py-20">
+            No hay proyectos {""}
+            <Link to="/projects/create" className="text-fuchsia-500 font-bold">
+              Crear Proyecto
+            </Link>
+          </p>
+        )}
+      </>
+    );
 }
 
 /**
@@ -37,7 +47,7 @@ export default function DashboardView() {
 
 - Para consultar a la API con useQuery tenemos que pasar la queryKey que es lo Escencial de esta herramienta useQuery porque esa key permite cachear en memoria del cliente lo que trae esa consulta a la api por lo cual te ahorras un monton de consultas y es mas veloz para trabajar esos datos en la app. Es una key unica para cada consulta, es excelente una gran ventaja tenerlo. Despues definimos la funcion que va a manejar la consulta a al api : getProjects que la definimos en ProjectApi.
 
-
+Usamos if (data) antes del return del componente por recomendacion de useQuery--> tambien se pude hacer con el optional chaining ? pero no queda tan cheto... 
 
 
 
