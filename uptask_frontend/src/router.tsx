@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppLayout } from "./Layouts/AppLayout";
 import DashboardView from "./Views/DashboardView";
 import CreateProjectView from "./Views/CreateProjectView";
+import EditProjectView from "./Views/EditProjectView";
 
 export default function Router() {
   return (
@@ -13,6 +14,8 @@ export default function Router() {
           <Route path="/" element={<DashboardView />} index />
           {/* Cuando visite '/projects/create' renderiza CreateProjectView */}
           <Route path="/projects/create" element={<CreateProjectView/>}/>
+          {/* Editar */}
+          <Route path="/projects/:projectId/edit" element={<EditProjectView/>}/>
         </Route>
       </Routes>
     </BrowserRouter>
@@ -46,7 +49,7 @@ export default function Router() {
  * Este Router lo llamamos en main.tsx | ahi empieza el juego.
  * 
  * La pelota SIEMPRE VIENE POR ACA: Empieza el CRUD- en ese orden. Primero CREAR- Esta app administra Proyectos (que tienen tareas) 
- * 
+ *  EIDTAR: agregamos la ruta con la variable que vamos a leer luego en el componente EditProjectView (/:projectId)
  *
  *
  *
