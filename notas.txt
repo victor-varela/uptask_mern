@@ -51,7 +51,7 @@ Cada vez que aparece una librería nueva, preguntate SOLO:
 @deprecated — use <MenuButton> instead of <Menu.Button> ahi dice que tienes que usar insted jejej
 8- Ya hicimos el 'C' del crud en el frontend: creamos un proyecto, hicimos un formulario, lo validamos, luego la 'R' MOSTRAMOS los proyectos creados-> validamos la respuesta de la api con ZOD, hicimos antes los schemas, ahora pasamos a 'U' uptadet - editar-> usamos useParamas() para pasar el id del proyecto a editar, es mejor confiar en la url que pasar props entre componentes, la ruta la definimos en el router y luego como hemos nombrado la variable en el router es como la vamos a recuperar en el componente donde Editamos usando useParams()-> Creamos EditProjectView en /src/Views y agreamos la ruta en el router. Para implementar la consulta a la DB para editar, escribimos la funcion que va a realizar la peticion a la API (src/api), esa funcion es la usaremos en la QueryFn de useQuery en EditProjectView.tsx
 
-OJO: fijate el flujo y conexion Views - ProjectAPI: CreateProjectView llama a createProject | DashboardView llama a getProjects | EditProjectView llama a editProjectById
+OJO: fijate el flujo y conexion Views - ProjectAPI: CreateProjectView llama a createProject | DashboardView llama a getProjects | EditProjectView llama a editProjectById | EditProjectForm llama a uptadeProject|
 
 
 Flujo de DEFENSA de la APP : Claude dice>>
