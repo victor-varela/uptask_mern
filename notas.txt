@@ -49,4 +49,38 @@ Cada vez que aparece una librería nueva, preguntate SOLO:
 - Cuando llamamos una API y recibimos algo, lo tengo que sanitizar, validar.. por eso uso ZOD. y ZOD tiene que saber como es el schema, la forma de los datos que voy a recibir, por eso lo defino antes en su /types/index.ts --> no hay sorpresas se como son los datos, los campos, los tpes, las formas (obj / array)
 7- Mostramos los proyectos que hay en la DB en DashboardView, usamos el gist del profe. --> import { Menu, Transition, MenuItem, MenuItems, MenuButton } from "@headlessui/react"; Agregamos estas importaciones en DashboardView porque Menu.Button, Menu.Item y Menu.Items estan deprecados.. esta es la nueva forma. Hovera en VsCode y lee (property) Button: _internal_ComponentMenuButton
 @deprecated — use <MenuButton> instead of <Menu.Button> ahi dice que tienes que usar insted jejej
-8- Ya hicimos el 'C' del crud en el frontend: creamos un proyecto, hicimos un formulario, lo validamos, luego la 'R' MOSTRAMOS los proyectos creados-> validamos la respuesta de la api con ZOD, hicimos antes los schemas, ahora pasamos a 'U' uptadet - editar-> usamos useParamas() para pasar el id del proyecto a editar, es mejor confiar en la url que pasar props entre componentes, la ruta la definimos en el router y luego como hemos nombrado la variable en el router es como la vamos a recuperar en el componente donde Editamos usando useParams()-> Creamos EditProjectView en /src/Views y agreamos la ruta en el router.
+8- Ya hicimos el 'C' del crud en el frontend: creamos un proyecto, hicimos un formulario, lo validamos, luego la 'R' MOSTRAMOS los proyectos creados-> validamos la respuesta de la api con ZOD, hicimos antes los schemas, ahora pasamos a 'U' uptadet - editar-> usamos useParamas() para pasar el id del proyecto a editar, es mejor confiar en la url que pasar props entre componentes, la ruta la definimos en el router y luego como hemos nombrado la variable en el router es como la vamos a recuperar en el componente donde Editamos usando useParams()-> Creamos EditProjectView en /src/Views y agreamos la ruta en el router. Para implementar la consulta a la DB para editar, escribimos la funcion que va a realizar la peticion a la API (src/api), esa funcion es la usaremos en la QueryFn de useQuery en EditProjectView.tsx
+
+OJO: fijate el flujo y conexion Views - ProjectAPI: CreateProjectView llama a createProject | DashboardView llama a getProjects | EditProjectView llama a editProjectById
+
+
+Flujo de DEFENSA de la APP : Claude dice>>
+
+CAPA 1 — react-hook-form (frontend)
+  "¿El campo está vacío? ¿Cumple el formato mínimo?"
+  → primera barrera, rápida, UX
+
+CAPA 2 — Backend: express-validator + middleware (validateProject)
+  "¿Los datos que llegaron por HTTP tienen el formato correcto?
+   ¿projectName es string? ¿No está vacío?"
+  → segunda barrera, la REAL — no importa si alguien saltea el
+    frontend con curl/Postman, esta sigue activa
+
+CAPA 3 — Backend: el Controller (createProject) + Mongoose
+  "Extraigo SOLO lo permitido, armo el modelo, lo guardo en Mongo"
+  → acá es donde realmente se decide qué entra a la base de datos
+
+  CAPA 4 — Frontend: Zod (dashboardViewSchema, projectSchema)
+  "Lo que la API me DEVOLVIÓ, ¿tiene la forma que yo espero
+   para poder mostrarlo sin romper la UI?"
+  → esta capa no protege a la API, protege a TU PROPIA APP
+    de datos inesperados que vengan de vuelta
+
+react-hook-form   → protege la UX (feedback rápido al usuario)
+express-validator  → protege la API (la barrera REAL contra
+                       cualquier cliente, no solo tu React)
+Controller +
+Mongoose            → protege la BASE DE DATOS (qué se guarda,
+                       cómo se guarda)
+Zod (frontend)      → protege TU PROPIA UI (que lo que renderices
+                       no explote si el backend cambia o falla)
