@@ -43,7 +43,20 @@ Por eso esta forma es mejor que el !: con el ! le mentís a TS ("confiá en mí"
  * Le pasamos data via props al componente EditProjectForm y ahi ya tenemos todo para llenar automaticamente los campos del formulario. <EditProjectForm data={data}/> mi primier impulso al ver que ts se queja de data: any es declarar el type en este componente, PERO habia que hacerlo en EditProjectForm, es decir, el componente al que le ENVIAMOS la prop!!! 
  * 
  * 
+ * OJO: ya implementado onError y onSucces en useMutation en EidtProjectForm, notamos que al editar un proyecto / volver a proyectos/ click editar ese mismo proyecto--> los datos no vienen ACTUALIZADOS, POR QUE? porque EditProjectView quien es el que muestra el formulario del poryecto a editar, va a decir:"este projecto que le estas dando click editar y lo hiciste recien porque tengo su projectId en mi queryKey, entonces te muestro los datos cacheados, los que ya habia guardados" Eso hay que corregirlo. Porque QUE HACE useQuery? como es un GET, cada vez que monta este componente hace el GET, la idea es que sea eficiente, entonces le dimos una queryKey 'editProject' y una variable 'projectId' para que diferencie entre los proyectos, entonces si user da click en un proyecto que ya edito y vuelve al componente, éste dice: ya esto lo tengo en cache, no hago la consulta a la DB pero es un error.
  * 
+ * Claude dice>>> 
+ * 1. Usuario entra a /projects/123/edit
+   → useQuery con key ['editProject', '123'] hace el GET, trae los datos,
+     los CACHEA bajo esa key exacta
+
+2. Usuario edita, guarda (mutate se dispara, el backend SÍ actualiza bien)
+
+3. Usuario vuelve a Dashboard, click en "Editar" en el MISMO proyecto otra vez
+   → useQuery ve la MISMA key ['editProject', '123']
+   → React Query dice: "ya tengo esto en cache, no hace falta pedirlo de nuevo"
+   → te muestra los datos VIEJOS (los de antes de editar), no los actualizados
+   ||| SOLUCION ||| : invalidateQueries "deshabilita el caching previo porque hay datos nuevos"
 
 
 

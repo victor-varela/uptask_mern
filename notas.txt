@@ -51,7 +51,7 @@ Cada vez que aparece una librería nueva, preguntate SOLO:
 @deprecated — use <MenuButton> instead of <Menu.Button> ahi dice que tienes que usar insted jejej
 8- Ya hicimos el 'C' del crud en el frontend: creamos un proyecto, hicimos un formulario, lo validamos, luego la 'R' MOSTRAMOS los proyectos creados-> validamos la respuesta de la api con ZOD, hicimos antes los schemas, ahora pasamos a 'U' uptadet - editar-> usamos useParamas() para pasar el id del proyecto a editar, es mejor confiar en la url que pasar props entre componentes, la ruta la definimos en el router y luego como hemos nombrado la variable en el router es como la vamos a recuperar en el componente donde Editamos usando useParams()-> Creamos EditProjectView en /src/Views y agreamos la ruta en el router. Para implementar la consulta a la DB para editar, escribimos la funcion que va a realizar la peticion a la API (src/api), esa funcion es la usaremos en la QueryFn de useQuery en EditProjectView.tsx
 
-OJO: fijate el flujo y conexion Views - ProjectAPI: CreateProjectView llama a createProject | DashboardView llama a getProjects | EditProjectView llama a editProjectById | EditProjectForm llama a uptadeProject|
+OJO: fijate el flujo y conexion Views - ProjectAPI: CreateProjectView llama a createProject | DashboardView llama a getProjects | EditProjectView llama a editProjectById | EditProjectForm llama a uptadeProject| Las VIEWs llaman a las API Fns
 
 
 Flujo de DEFENSA de la APP : Claude dice>>
@@ -84,3 +84,53 @@ Mongoose            → protege la BASE DE DATOS (qué se guarda,
                        cómo se guarda)
 Zod (frontend)      → protege TU PROPIA UI (que lo que renderices
                        no explote si el backend cambia o falla)
+
+9- Seguimos 'Actualizando' la 'U' del CRUD. y para ver el ESTADO de las consultas a la api instalamos en el frontend react-query-devtools. Tiene que ver con un bug en la edicion que aparece cuando no esta habilitado invalidateQueries- npm i @tanstak/react-query-devtools .- Esto permite ver en el browser como se comportan las consultas a la api. Luego, en main.tsx agreamos el componente <ReactQueryDevTools/> despues de <Router/> y asi lo instanciamos en la APP. En Stale, en el icono playa esta lo que se guarda en cache. A su vez, instalamos morgan para loggear las consultas npm i morgan npm i -D @types/morgan -- Vamos al backend /server.ts importamos morgan y lo instanciamso app.use(morgan('dev')) esto es lo que nos da morgan : GET /api/projects 304 120.553 ms - 
+
+React-query cachea todas las consultas, esa es su funcion, su ventaja.- Cuando no nos conviene que lo haga tenemos que deshablitarlo invalidateQueries
+
+LA DIFERENCIA DE COMO SE HACIA ANTES SIN REACT-QUERY || USEEFFECT - USESTATE 
+
+A MANO (useEffect + useState)          CON React Query (useQuery)
+────────────────────────────────────   ──────────────────────────
+3 useState por cada consulta            1 solo hook
+useEffect con array de dependencias     queryKey hace lo mismo, mejor
+try/catch/finally repetido en           React Query lo maneja interno
+  cada componente que consulta algo
+SIN cache — cada vez que el              CON cache automático — mismo
+  componente se monta, vuelve             projectId → mismo dato
+  a pedir todo de cero                    (mientras no se invalide)
+SIN revalidación automática              Revalida solo al volver a la
+                                           pestaña, reconectar red, etc.
+
+
+
+export default function DashboardView() {
+  // 3 estados separados que useQuery te da en 1 solo hook
+  const [data, setData] = useState<Project[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    // Función async DENTRO de useEffect (useEffect no puede ser async directamente)
+    const fetchProjects = async () => {
+      try {
+        setIsLoading(true); // REACT-QUERY: LO TRAE HECHO isLoading
+        const projects = await getProjects();//REACT-QUERY LO TRAE HECHO queryFn
+        setData(projects); //REACT-QUERY LO TRAE HECHO data
+      } catch (error) {
+        setIsError(true);//REACT-QUERY LO TRAE HECHO error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []); // ← array vacío = "ejecutá esto SOLO al montar el componente"//REACT-QUERY LO TRAE HECHO queryKey
+
+  if (isLoading) return "cargando...";
+  if (isError) return <p>Error al cargar</p>;
+  
+  return (/* JSX con data.map(...) */);
+}
+

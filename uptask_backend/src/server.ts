@@ -2,6 +2,7 @@ import express from "express";
 import { connectDB } from "./config/db";
 import dotenv from "dotenv";
 import cors from 'cors'
+import morgan from "morgan";
 import { corsConfig } from "./config/cors";
 import projectRoutes from "./routes/projectRoutes"; //Default import → sin llaves, podés ponerle cualquier nombre.
 
@@ -20,6 +21,9 @@ const app = express();
 //Habilitamos CORS
 
 app.use(cors(corsConfig))
+
+//Loggin de consultas
+app.use(morgan('dev'))
 
 //Habilitar lectura Json
 app.use(express.json());
