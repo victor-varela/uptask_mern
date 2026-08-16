@@ -8,9 +8,8 @@ import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function DashboardView() {
-
-  //Implementamos invalidateQueries para refrescar el state 
-  const queryClient = useQueryClient()
+  //Implementamos invalidateQueries para refrescar el state
+  const queryClient = useQueryClient();
   //Implementamos useQuery-> Obtener Projectos
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
@@ -18,18 +17,17 @@ export default function DashboardView() {
   });
 
   //Implementamos useMutation-> Eliminar Projecto
-  const {mutate} = useMutation({
-  mutationFn: deleteProject,
-  onError:(error)=>{
-    toast.error(error.message)
-  },
-  onSuccess:(data)=>{
-
-    //refrescamos /reFetch otro fecth state usando invalidateQueries
-    queryClient.invalidateQueries({queryKey:['projects']})
-    toast.success(data)
-  }
-  })
+  const { mutate } = useMutation({
+    mutationFn: deleteProject,
+    onError: error => {
+      toast.error(error.message);
+    },
+    onSuccess: data => {
+      //refrescamos /reFetch otro fecth state usando invalidateQueries
+      queryClient.invalidateQueries({ queryKey: ["projects"] });
+      toast.success(data);
+    },
+  });
 
   if (isLoading) return "cargando...";
 
@@ -82,7 +80,10 @@ export default function DashboardView() {
                           </Link>
                         </MenuItem>
                         <MenuItem>
-                          <Link to={`/projects/${project._id}/edit`} className="block px-3 py-1 text-sm leading-6 text-gray-900">
+                          <Link
+                            to={`/projects/${project._id}/edit`}
+                            className="block px-3 py-1 text-sm leading-6 text-gray-900"
+                          >
                             Editar Proyecto
                           </Link>
                         </MenuItem>
@@ -90,7 +91,11 @@ export default function DashboardView() {
                           <button
                             type="button"
                             className="block px-3 py-1 text-sm leading-6 text-red-500"
-                            onClick={() => mutate(project._id)}
+                            onClick={() => {
+                              if (window.confirm(`¿Confirmas que quieres eliminar: ${project.projectName}?`)) {
+                                mutate(project._id);
+                              }
+                            }}
                           >
                             Eliminar Proyecto
                           </button>

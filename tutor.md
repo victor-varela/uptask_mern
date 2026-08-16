@@ -135,32 +135,36 @@ Retención      → 3/5 mejorando con sistema de 24h ✅
 ---
 
 ## 📍 Progreso actual
-- **Sección activa:** 29/30 — UpTask: Frontend, CRUD de Proyectos (Crear + Listar + Editar en curso)
-- **Último video completado:** EditProjectView conectada con useQuery + editProjectById,
-  EditProjectForm recibe `data` por props pero AÚN NO la usa (bug detectado, ver Errores comunes)
-- **Próximo video:** previsiblemente la mutación de "Guardar Cambios" (updateProject) — ahí se
-  resuelve si el profe usa `Project` (con _id) o algo distinto para la prop de EditProjectForm
-- **Pregunta de retención para próxima sesión:** ¿por qué `data._id` explotaba la app cuando se
-  leía ANTES de los `if(isLoading)` / `if(isError)`, pero no después? ¿qué tiene que ver con
-  narrowing?
-- **TODOs técnicos pendientes (2):**
-  1. `EditProjectForm` no prellena el form — usa `initialValues` vacío en vez de `data` en
-     `useForm({ defaultValues: ... })`
-  2. Tipo de la prop `data` en `EditProjectFormProps` es `ProjectFormData` (sin `_id`) — hace
-     falta `_id` para el update futuro; cambiar a `Project` si el curso no lo resuelve solo
-  3. (siempre pendiente) agregar `projectSchema.safeParse()` a `editProjectById`, igual que
-     ya tiene `getProjects`
+- **Sección activa:** 29/30 — UpTask: Frontend, CRUD COMPLETO de Proyectos (Crear/Listar/Editar/Eliminar)
+- **Último video completado:** video 489 — deleteProject implementado en DashboardView con
+  useMutation + invalidateQueries; bug encontrado (deleteProject retornaba AxiosResponse
+  completo en vez de `.data`) — pendiente de aplicar el fix (desestructurar `{ data }`)
+- **Próximo video:** a confirmar — CRUD frontend de Proyectos está completo funcionalmente,
+  probablemente sigue con Tareas (Tasks) en el frontend, o validaciones/detalles pendientes
+- **Pregunta de retención para próxima sesión:** ¿por qué en `EditProjectForm` no hizo falta
+  `reset()` + `useEffect` para evitar datos viejos tras editar, a diferencia de lo que se temía
+  al principio? (pista: desmontaje/montaje de componente al navegar)
+- **TODOs técnicos pendientes:**
+  1. Aplicar fix a `deleteProject` en ProjectAPI.ts — desestructurar `const { data } = await
+     api.delete(...)` en vez de retornar el AxiosResponse completo (rompe toast.success)
+  2. Tipo de la prop `data` en `EditProjectFormProps` sigue siendo `ProjectFormData` (sin
+     `_id`) — el profe resolvió el `_id` tomándolo de `useParams()` directo en el componente,
+     no hizo falta ensanchar el tipo — este TODO queda CERRADO, no aplica más
+  3. Agregar `projectSchema.safeParse()` a `editProjectById` (mismo patrón que getProjects)
+     — sigue pendiente, baja prioridad
 - **⚠️ NOTA IMPORTANTE:** Numeración de videos desalineada respecto al roadmap original — no
   perseguir el número exacto, verificar por CONTENIDO.
 - **Sección 27:** ✅ COMPLETA
 - **Sección 28:** ✅ COMPLETA — 19/19 videos, CRUD de Proyectos y Tareas + middlewares refactorizados
 - **Sección 29-30:** 🔄 En curso — Tailwind (v3), Router + Layout + Outlet, AppLayout con Logo,
   NavMenu (HeadlessUI Popover, migrada a API no deprecada), path aliases @/, CORS configurado,
-  react-toastify, CRUD frontend: Crear (react-hook-form + useMutation + Zod types) y Listar
-  (useQuery + Zod dashboardViewSchema) completos; Editar recién arrancando (ruta + useParams
-  + función de API, falta conectar con la vista). MongoDB conectando correctamente tras resolver
-  incidente de querySrv (ver Errores comunes). Repo Git unificado tras resolver submódulos
-  fantasma (ver Errores comunes). Víctor usa capturas como referencia visual (carpeta referencias-ui/)
+  react-toastify. CRUD frontend de Proyectos COMPLETO: Crear (react-hook-form + useMutation +
+  Zod types), Listar (useQuery + Zod dashboardViewSchema), Editar (useParams + useQuery +
+  useMutation, Reglas de los Hooks aplicadas correctamente), Eliminar (useMutation +
+  invalidateQueries, con bug de retorno de axios pendiente de arreglar). MongoDB conectando
+  correctamente tras resolver incidente de querySrv (ver Errores comunes). Repo Git unificado
+  tras resolver submódulos fantasma (ver Errores comunes). Víctor usa capturas como referencia
+  visual (carpeta referencias-ui/)
 
 ---
 
@@ -658,26 +662,19 @@ lo que pasa es que TS, una vez que existe un contrato declarado, VERIFICA en cad
 donde se usa el componente que lo que se le pasa cumple ese contrato (mismo mecanismo que
 `handleSubmit(handleForm)` — contrato declarado una vez, verificado en cada uso).
 
-### 🐛 Bug pendiente — EditProjectForm no prellena el formulario
+### ✅ RESUELTO — EditProjectForm ahora sí prellena el formulario
 ```typescript
-export default function EditProjectForm({data}: EditProjectFormProps) {
-  const initialValues: ProjectFormData = { projectName: "", clientName: "", description: "" };
-  const { register, ... } = useForm({ defaultValues: initialValues });  // ❌ usa el objeto
-                                                                          //    vacío, ignora "data"
+const { register, ... } = useForm({ defaultValues: data });  // ✅ corregido — ya usa "data"
 ```
-`data` llega por props con los valores reales del proyecto, pero nunca se usa — el form de
-"Editar" se muestra en blanco. Arreglo: `useForm({ defaultValues: data })` en vez del objeto
-hardcodeado, y eliminar `initialValues`. Pendiente de aplicar (o ver si el profe lo resuelve
-en el próximo video).
+`data` llega por props con los valores reales del proyecto. Bug de la sesión anterior
+(usaba un `initialValues` vacío hardcodeado) ya corregido.
 
-### ⚠️ TODO — tipo de la prop `data` en EditProjectForm (falta `_id` para el update futuro)
-`EditProjectFormProps` usa `data: ProjectFormData` (sin `_id`, por diseño — pensado para
-CREAR). Pero para editar hace falta el `_id` real del proyecto (confirmado con
-`console.log(data._id)` en EditProjectView — el objeto real SÍ lo trae). Cuando llegue la
-mutación de "Guardar Cambios" (`updateProject`), va a hacer falta mandar el `_id` a la API.
-Solución identificada, sin aplicar todavía — cambiar el tipo a `Project` (que sí incluye
-`_id`, viene de `z.infer<typeof projectSchema>`) en vez de `ProjectFormData`. Víctor decidió
-esperar a ver cómo lo resuelve el curso antes de aplicar el cambio él mismo.
+### ✅ RESUELTO — cómo se obtuvo el `_id` para editar (no se tocó el tipo de la prop)
+`EditProjectFormProps` se mantuvo como `data: ProjectFormData` (sin `_id`) — el profe NO
+ensanchó el tipo. En vez de eso, `EditProjectForm` toma `projectId` directo de `useParams()`
+dentro del propio componente (mismo patrón que EditProjectView), y arma el objeto para
+`mutate` a mano: `mutate({ projectId, formData })`. Coincide con el principio ya anotado
+("confiar en la URL, no pasar props entre componentes") — más prolijo que ensanchar el tipo.
 React Router no matchea la ruta si falta el segmento (`/projects/:projectId/edit` exige
 algo en esa posición). Para probar el `if` en la práctica, se fuerza a mano en el código
 (`const projectId = undefined`, temporal) — no navegando.
@@ -692,6 +689,62 @@ Zod (frontend, en las func.    → protege la PROPIA UI — que lo que la API de
   de API tipo getProjects)        no rompa el render si el backend cambia o falla
 ```
 Ninguna capa sola alcanza — es "defensa en profundidad", cada una con propósito distinto.
+
+### React Query — invalidateQueries (refrescar cache tras una mutación)
+```typescript
+const queryClient = useQueryClient()
+const { mutate } = useMutation({
+  mutationFn: deleteProject,
+  onError: (error) => toast.error(error.message),
+  onSuccess: (data) => {
+    queryClient.invalidateQueries({ queryKey: ['projects'] })  // marca el cache
+                                                                  // como "viejo" →
+                                                                  // refetch automático
+    toast.success(data)
+  }
+})
+```
+El orden entre `invalidateQueries(...)` y `toast.success(...)` dentro de `onSuccess` NO
+importa mientras no se use `await` — ambas son disparadas casi simultáneamente, ninguna
+bloquea a la otra. Solo importaría si se hiciera `await queryClient.invalidateQueries(...)`.
+
+**Caso real investigado — por qué a veces SÍ hace falta `reset()` + `useEffect` y por qué
+en EditProjectForm no hizo falta:** el temor era que `defaultValues: data` en `useForm`
+quedara con una "foto vieja" tras editar y volver a entrar. En la práctica no pasó, porque
+navegar a `/` y volver a `/edit` DESMONTA y vuelve a MONTAR el componente de cero — cada
+montaje toma una foto fresca. `reset(data)` en un `useEffect` solo sería necesario si el
+componente permanece MONTADO mientras `data` cambia por detrás (ej. un modal de edición que
+no navega a otra ruta). Buena lección práctica: probar empíricamente antes de asumir que una
+solución teórica aplica al caso real.
+
+### useQuery, reconstruido "a mano" con useEffect + useState (ejercicio de abstracción)
+```typescript
+// SIN React Query — lo que useQuery hace por dentro, expuesto
+const [data, setData] = useState<Project[]>([]);
+const [isLoading, setIsLoading] = useState(true);
+const [isError, setIsError] = useState(false);
+
+useEffect(() => {
+  const fetchProjects = async () => {
+    try {
+      setIsLoading(true);          // ≈ isLoading de useQuery
+      const projects = await getProjects();  // ≈ queryFn
+      setData(projects);            // ≈ data
+    } catch (error) {
+      setIsError(true);             // ≈ error/isError
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  fetchProjects();
+}, []);  // NO equivale exactamente a queryKey — controla CUÁNDO se re-ejecuta el efecto,
+         // mientras que queryKey controla tanto el cache como cuándo la query se
+         // considera "distinta" (si la key cambia, dispara nuevo fetch). Son parecidos
+         // pero no lo mismo — el array de deps de useEffect es más cercano a la PARTE
+         // dinámica de una queryKey (ej. el projectId dentro de ['editProject', projectId])
+```
+Sin React Query, "invalidar" un cache no existe como concepto — habría que forzar un
+nuevo fetch a mano (llamar la función de nuevo, o algún estado extra tipo "trigger").
 
 ### ⚠️ Alerta activa — Tailwind v3
 El profe usa Tailwind CSS **v3** (no v4, que es la versión actual en la doc oficial de
@@ -776,6 +829,14 @@ va limitado — de lo contrario es incómodo de leer en pantallas anchas.
   el `.git` de cada subrepo ANTES de (o apenas al) integrarlos — no esperar a que el
   problema aparezca. Ojo con herramientas que auto-inicializan git (ej. algunos
   scaffolding tools como `npm create vite@latest` en ciertas configuraciones)
+- Funciones de API que retornan el `AxiosResponse` completo en vez de solo `.data`:
+  síntoma típico — error de TS tipo `Type 'AxiosResponse<...>' is not assignable to
+  type 'ToastContent<unknown>'` al usar el resultado en `toast.success(data)`. Causa:
+  falta la desestructuración `const { data } = await api...` (patrón correcto, ya usado
+  en createProject/getProjects) — sin ella, se retorna el objeto axios entero, no el
+  valor útil. Cómo leer el error para detectarlo solo: el mensaje dice qué tipo SE
+  produjo vs qué tipo SE ESPERABA — preguntar "¿por qué mi código está generando el tipo
+  que NO se espera?" en vez de buscar la solución directo.
 
 ---
 
@@ -924,6 +985,38 @@ va limitado — de lo contrario es incómodo de leer en pantallas anchas.
   la futura mutación de update. Solución identificada (cambiar a `Project`, que sí incluye
   `_id`) — Víctor decidió esperar a ver si el curso lo resuelve antes de aplicar el cambio
 
+### Sesión 28/07/2026 (parte 4) — updateProject, Reglas de los Hooks, invalidateQueries, delete
+- El profe resolvió el `_id` para editar tomándolo de `useParams()` directo en
+  `EditProjectForm` (no ensanchando el tipo de la prop `data`) — más prolijo que la
+  sugerencia del tutor, y coincide con el principio ya anotado por Víctor ("confiar en la
+  URL, no pasar props"). `mutate` recibe un objeto armado a mano `{projectId, formData}`
+  porque solo acepta 1 argumento
+- Detectado por el tutor: `if(!projectId)` estaba ANTES de `useForm`/`useMutation` — viola
+  las Reglas de los Hooks (deben llamarse siempre en el mismo orden/cantidad en cada
+  render). Explicado con ejemplo de useState que si explota en un escenario condicional
+  real. Víctor lo corrigió solo, moviendo el `if` después de los hooks
+- Buen ejercicio de escritura de comentario propio explicando el mecanismo de hooks —
+  quedó preciso
+- El profe señaló un bug real (no detectado por Víctor esta vez, aclarado explícitamente
+  por él mismo cuando el tutor le atribuyó el mérito) — datos viejos al reeditar un
+  proyecto ya editado, por cache de useQuery. Buena investigación conjunta: el tutor
+  planteó una hipótesis de 2 causas (cache + `defaultValues` congelado en react-hook-form),
+  Víctor la refutó empíricamente probando el caso real — la segunda causa no aplicaba
+  porque el componente se desmonta/remonta al navegar, no queda vivo con data vieja.
+  Buena lección práctica sobre verificar antes de asumir que la teoría aplica 1:1
+- A pedido de Víctor, se reconstruyó `useQuery` "a mano" con useEffect+useState para
+  DashboardView, mapeando cada pieza manual contra su equivalente en React Query. Víctor
+  escribió su propia versión anotada — un matiz corregido (queryKey ≠ exactamente deps de
+  useEffect, son conceptos relacionados pero no idénticos)
+- Bug real en `deleteProject` (video 489): retornaba el `AxiosResponse` completo en vez de
+  `.data`, causando error de tipos en `toast.success(data)`. Víctor generalizó bien la
+  lección de cómo leer errores de TypeScript ("qué tipo se produjo vs qué tipo se esperaba,
+  preguntar por qué mi código genera ese tipo") — buena metacognición sobre su propio
+  proceso de debugging, no solo el bug puntual
+
 ---
 
-*Última actualización: Sesión del 28/07/2026 — CRUD frontend completo hasta Editar (formulario con bug de prellenado pendiente). Consolidado narrowing de TypeScript, categorías de any, y mapa de capas de defensa.*
+*Última actualización: Sesión del 28/07/2026 — CRUD frontend completo (Crear, Listar,
+Editar, Eliminar) con React Query. Reglas de los Hooks, invalidateQueries, y bug de
+deleteProject resueltos. Buen hábito consolidado: leer errores de TS antes de buscar
+la solución.*
