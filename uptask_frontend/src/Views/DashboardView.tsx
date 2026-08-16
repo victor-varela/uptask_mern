@@ -1,16 +1,35 @@
-import { getProjects } from "@/api/ProjectAPI";
-import { useQuery } from "@tanstack/react-query";
+import { deleteProject, getProjects } from "@/api/ProjectAPI";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Fragment } from "react";
 import { Menu, Transition, MenuItem, MenuItems, MenuButton } from "@headlessui/react";
 import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function DashboardView() {
-  //Implementamos useQuery->
+
+  //Implementamos invalidateQueries para refrescar el state 
+  const queryClient = useQueryClient()
+  //Implementamos useQuery-> Obtener Projectos
   const { data, isLoading } = useQuery({
     queryKey: ["projects"],
     queryFn: getProjects,
   });
+
+  //Implementamos useMutation-> Eliminar Projecto
+  const {mutate} = useMutation({
+  mutationFn: deleteProject,
+  onError:(error)=>{
+    toast.error(error.message)
+  },
+  onSuccess:(data)=>{
+
+    //refrescamos /reFetch otro fecth state usando invalidateQueries
+    queryClient.invalidateQueries({queryKey:['projects']})
+    toast.success(data)
+  }
+  })
 
   if (isLoading) return "cargando...";
 
@@ -71,7 +90,7 @@ export default function DashboardView() {
                           <button
                             type="button"
                             className="block px-3 py-1 text-sm leading-6 text-red-500"
-                            onClick={() => {}}
+                            onClick={() => mutate(project._id)}
                           >
                             Eliminar Proyecto
                           </button>

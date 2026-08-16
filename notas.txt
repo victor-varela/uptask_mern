@@ -49,9 +49,9 @@ Cada vez que aparece una librería nueva, preguntate SOLO:
 - Cuando llamamos una API y recibimos algo, lo tengo que sanitizar, validar.. por eso uso ZOD. y ZOD tiene que saber como es el schema, la forma de los datos que voy a recibir, por eso lo defino antes en su /types/index.ts --> no hay sorpresas se como son los datos, los campos, los tpes, las formas (obj / array)
 7- Mostramos los proyectos que hay en la DB en DashboardView, usamos el gist del profe. --> import { Menu, Transition, MenuItem, MenuItems, MenuButton } from "@headlessui/react"; Agregamos estas importaciones en DashboardView porque Menu.Button, Menu.Item y Menu.Items estan deprecados.. esta es la nueva forma. Hovera en VsCode y lee (property) Button: _internal_ComponentMenuButton
 @deprecated — use <MenuButton> instead of <Menu.Button> ahi dice que tienes que usar insted jejej
-8- Ya hicimos el 'C' del crud en el frontend: creamos un proyecto, hicimos un formulario, lo validamos, luego la 'R' MOSTRAMOS los proyectos creados-> validamos la respuesta de la api con ZOD, hicimos antes los schemas, ahora pasamos a 'U' uptadet - editar-> usamos useParamas() para pasar el id del proyecto a editar, es mejor confiar en la url que pasar props entre componentes, la ruta la definimos en el router y luego como hemos nombrado la variable en el router es como la vamos a recuperar en el componente donde Editamos usando useParams()-> Creamos EditProjectView en /src/Views y agreamos la ruta en el router. Para implementar la consulta a la DB para editar, escribimos la funcion que va a realizar la peticion a la API (src/api), esa funcion es la usaremos en la QueryFn de useQuery en EditProjectView.tsx
+8- Ya hicimos el 'C' del crud en el frontend: creamos un proyecto, hicimos un formulario, lo validamos, luego la 'R' MOSTRAMOS los proyectos creados-> validamos la respuesta de la api con ZOD, hicimos antes los schemas, ahora pasamos a 'U' uptadet - editar-> usamos useParamas() para pasar el id del proyecto a editar, es mejor confiar en la url que pasar props entre componentes, la ruta la definimos en el router y luego como hemos nombrado la variable en el router es como la vamos a recuperar en el componente donde Editamos usando useParams()-> Creamos EditProjectView en /src/Views y agreamos la ruta en el router. Para implementar la consulta a la DB para editar, escribimos la funcion que va a realizar la peticion a la API (src/api), esa funcion es la usaremos en la QueryFn de useQuery(useMutation) en EditProjectView.tsx
 
-OJO: fijate el flujo y conexion Views - ProjectAPI: CreateProjectView llama a createProject | DashboardView llama a getProjects | EditProjectView llama a editProjectById | EditProjectForm llama a uptadeProject| Las VIEWs llaman a las API Fns
+OJO: fijate el flujo y conexion Views - ProjectAPI: CreateProjectView llama a createProject | DashboardView llama a getProjects y deleteProject | EditProjectView llama a editProjectById | EditProjectForm llama a uptadeProject| Las VIEWs llaman a las API Fns
 
 
 Flujo de DEFENSA de la APP : Claude dice>>
@@ -126,7 +126,7 @@ export default function DashboardView() {
     };
 
     fetchProjects();
-  }, []); // ← array vacío = "ejecutá esto SOLO al montar el componente"//REACT-QUERY LO TRAE HECHO queryKey
+  }, []); // ← array vacío = "ejecutá esto SOLO al montar el componente"//REACT-QUERY LO TRAE HECHO queryKey, parecido pero no tal cual-- 
 
   if (isLoading) return "cargando...";
   if (isError) return <p>Error al cargar</p>;
@@ -134,3 +134,4 @@ export default function DashboardView() {
   return (/* JSX con data.map(...) */);
 }
 
+9- Implementamos la D- delete en DashboardView. Recuerda usar invalidateQueries para REFRESCAR el state y que muestre los cambios en la UI sin tener que recargar la pag. Agregamos mutate en el boton eliminar y seguimos los pasos de useMutation para indicar la mutationFn que vamos a usar-deleteProject => escribimos deleteProject en /ProjectAPI con su argumento(projectId), onErorr y onSucces.. || cuando TS tira un error de tipos "no coincide A con B", antes de buscar la solución, primero preguntate "¿por qué mi código está produciendo A, cuando yo esperaba B?". El error casi siempre te dice la pista completa, solo que en inglés técnico — tu traducción mental de "me estás pasando el objeto de axios, no el dato" fue exactamente el paso correcto.

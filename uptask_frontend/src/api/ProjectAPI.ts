@@ -39,13 +39,24 @@ export async function editProjectById(id: Project["_id"]) {
     }
   }
 }
-type UpdateProjectType={
-  projectId:Project['_id'],
-  formData:ProjectFormData
-}
-export async function updateProject({projectId, formData}: UpdateProjectType) {
+type UpdateProjectType = {
+  projectId: Project["_id"];
+  formData: ProjectFormData;
+};
+export async function updateProject({ projectId, formData }: UpdateProjectType) {
   try {
-    const { data } = await api.put(`/projects/${projectId}`, formData);
+    const { data } = await api.put<string>(`/projects/${projectId}`, formData);
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+
+export async function deleteProject(id: Project["_id"]) {
+  try {
+    const {data} = await api.delete<string>(`/projects/${id}`);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
