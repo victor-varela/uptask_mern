@@ -31,7 +31,7 @@ export async function getProjects() {
 
 export async function editProjectById(id: Project["_id"]) {
   try {
-    const { data } = await api(`/projects/${id}`);
+    const { data } = await api<Project>(`/projects/${id}`);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {

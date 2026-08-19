@@ -3,6 +3,7 @@ import { AppLayout } from "./Layouts/AppLayout";
 import DashboardView from "./Views/DashboardView";
 import CreateProjectView from "./Views/CreateProjectView";
 import EditProjectView from "./Views/EditProjectView";
+import { ProjectDetailsView } from "./Views/ProjectDetailsView";
 
 export default function Router() {
   return (
@@ -14,6 +15,8 @@ export default function Router() {
           <Route path="/" element={<DashboardView />} index />
           {/* Cuando visite '/projects/create' renderiza CreateProjectView */}
           <Route path="/projects/create" element={<CreateProjectView/>}/>
+          {/* Ver proyecto */}
+          <Route path="projects/:projectId" element={<ProjectDetailsView/>}/>
           {/* Editar */}
           <Route path="/projects/:projectId/edit" element={<EditProjectView/>}/>
         </Route>
