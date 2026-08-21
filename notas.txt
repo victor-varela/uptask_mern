@@ -137,3 +137,93 @@ export default function DashboardView() {
 9- Implementamos la D- delete en DashboardView. Recuerda usar invalidateQueries para REFRESCAR el state y que muestre los cambios en la UI sin tener que recargar la pag. Agregamos mutate en el boton eliminar y seguimos los pasos de useMutation para indicar la mutationFn que vamos a usar-deleteProject => escribimos deleteProject en /ProjectAPI con su argumento(projectId), onErorr y onSucces.. || cuando TS tira un error de tipos "no coincide A con B", antes de buscar la solución, primero preguntate "¿por qué mi código está produciendo A, cuando yo esperaba B?". El error casi siempre te dice la pista completa, solo que en inglés técnico — tu traducción mental de "me estás pasando el objeto de axios, no el dato" fue exactamente el paso correcto.
 
 10- Hacemos funcional <Ver Projecto> |--> creamos la ruta en el router, linkeamos a la vista, seguramente esa vista llame a la api... Todo arranca en el router luego la vista, luego la api(funcionalidad)-- En DashboardView agreamos el link (la ruta que recien creamos en el router) a la vista ProjectDetailsView donde corresponde- Usamos navigate y query parameters para aprovechar la URL como un STATE, siempre es mejor la URL para poder compartir el link con otro user.- Hacemos el Modal funcional a ese query parameters.-
+
+11- Empezamos a trabajar ahora con las tareas de cada proyecto, CRUD de Tareas: para empezar, definimos el schema y type de tareas por que? 
+Claude dice>>
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * MANUAL GENERAL — ARQUITECTURA DE UN CRUD COMPLETO (Front + Back)
+ * ═══════════════════════════════════════════════════════════════
+ *
+ * CAPA 0 — Contrato de datos (ANTES de escribir cualquier código)
+ * ─────────────────────────────────────────────────────────────
+ * 1. Schema con Zod (frontend) → la forma que ESPERO recibir de la API
+ * 2. Type derivado del schema (z.infer) → para que TS me ayude
+ * 3. Types "recortados" con Pick/Omit según el caso de uso
+ *    (crear ≠ editar ≠ mostrar, no siempre necesito los mismos campos)
+ * POR QUÉ PRIMERO: todo lo que sigue se apoya en esta definición.
+ * Si cambia después, TS avisa en cascada todo lo que rompe.
+ *
+ * CAPA 1 — Backend: modelo y reglas de negocio
+ * ─────────────────────────────────────────────────────────────
+ * 1. Model (Mongoose) → cómo se guarda en la DB
+ * 2. Validaciones (express-validator) → qué formato acepta cada campo
+ * 3. Controller → lógica de cada operación (create/read/update/delete)
+ * 4. Middleware de pertenencia/autorización → ¿este recurso es del
+ *    dueño/proyecto correcto? ¿tengo permiso?
+ * POR QUÉ ANTES que las funciones de API: no tiene sentido apuntar
+ * el frontend a un endpoint que no existe o no está validado.
+ *
+ * CAPA 2 — Funciones de API (frontend) — una por operación
+ * ─────────────────────────────────────────────────────────────
+ * getX(id) | getXById(id) | createX(data) | updateX(id,data) | deleteX(id)
+ * REGLAS FIJAS:
+ *  - Desestructurar { data } de axios, NUNCA retornar el AxiosResponse
+ *    completo (rompe toast/UI — bug real que encontré en deleteProject)
+ *  - try/catch con isAxiosError + throw new Error(...) → si no hago
+ *    throw, el error NUNCA llega a onError de la mutación
+ *  - Cuidado con el "else" faltante en el catch → si no es error de
+ *    axios, igual hacer throw de algo, sino queda undefined silencioso
+ *  - Si la respuesta es sensible a estructura (array, objeto anidado)
+ *    → validar con Zod (safeParse) antes de retornar
+ *
+ * CAPA 3 — Conectar la API con React (React Query)
+ * ─────────────────────────────────────────────────────────────
+ * LEER (GET)            → useQuery
+ *   - queryKey única y descriptiva: ['tasks', projectId], no solo
+ *     ['tasks'] — si depende de una variable, va DENTRO del array
+ * CREAR/EDITAR/BORRAR    → useMutation
+ *   - mutationFn apunta a la función de API
+ *   - onError → toast.error(error.message)
+ *   - onSuccess → invalidateQueries de TODAS las queryKeys afectadas
+ *     (a veces son 2: la lista Y el detalle)
+ * POR QUÉ query≠mutation: GET es idempotente/cacheable, el resto
+ * produce un efecto real cada vez → React Query los trata distinto.
+ *
+ * CAPA 4 — Formularios (crear/editar)
+ * ─────────────────────────────────────────────────────────────
+ * - react-hook-form con defaultValues (vacíos para crear, con data
+ *   real para editar — mismo componente, distinto estado inicial)
+ * - Validación básica (required, etc.) → primera barrera, solo UX
+ * - El type del form suele ser un Pick del type completo
+ *
+ * CAPA 5 — Vistas / componentes que orquestan todo
+ * ─────────────────────────────────────────────────────────────
+ * 1. TODOS los hooks primero (Reglas de los Hooks)
+ * 2. Guardas de datos DESPUÉS de los hooks (if !id, if isError,
+ *    if isLoading) — nunca antes
+ * 3. Render condicional según el estado de la query
+ * 4. Acciones destructivas (eliminar) → SIEMPRE confirmación antes
+ *    de mutar (window.confirm o modal, nunca directo al click)
+ *
+ * CAPA 6 — Navegación y estado en la URL
+ * ─────────────────────────────────────────────────────────────
+ * - useParams() → identificar QUÉ recurso estoy viendo/editando
+ * - Query strings (?newTask=true) → estado de UI compartible/
+ *   bookmarkeable (ej: modal abierto)
+ * - navigate() → dentro de eventos/callbacks (imperativo)
+ * - <Navigate /> → redirecciones dentro del render (declarativo)
+ * - { replace: true } → cuando la navegación es un paso que NO
+ *   debería quedar en el historial (ej: cerrar un modal)
+ *
+ * ───────────────────────────────────────────────────────────────
+ * CHECKLIST MENTAL RÁPIDO (una pregunta por capa):
+ * Schema/Types        → ¿qué forma tienen mis datos?
+ * Backend              → ¿qué se permite guardar y quién lo toca?
+ * Funciones de API      → ¿cómo hablo con el backend, y si falla?
+ * React Query            → ¿cómo cacheo/sincronizo con la UI?
+ * Formularios             → ¿cómo capturo lo que el user cambia?
+ * Vistas                   → ¿qué muestro según el estado actual?
+ * Navegación/URL             → ¿cómo se mueve, qué queda en el historial?
+ * ───────────────────────────────────────────────────────────────
+ */
