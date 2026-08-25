@@ -39,7 +39,7 @@ export default function CreateProjectView() {
   });
 
   //función que recibe los datos ya validados y dispara la creación del proyecto-> se la pasamos a handleSubmit del hookForm que esta en el onSUbmit- toma los datos que user ingreso en el formulario una vez que pasaron la validacion-(formData)-- ya limpios... los procesó handleSubmit..
-  const handleForm = async (formData: ProjectFormData) => mutate(formData)
+  const handleForm = (formData: ProjectFormData) => mutate(formData)
   return (
     <>
       <div className="max-w-3xl mx-auto">

@@ -1,10 +1,13 @@
 import { Fragment } from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import type { TaskFormData } from "@/types";
+import type { Project, TaskFormData } from "@/types";
 import { useForm } from "react-hook-form";
 import TaskForm from "./TaskForm";
+import { useMutation } from "@tanstack/react-query";
+import { createTask } from "@/api/TaskAPI";
+import { toast } from "react-toastify";
 
 export default function AddTaskModal() {
   //Instanciamos navigate para usar en el onClose-> repalce:true eso elimina el query param
@@ -21,6 +24,7 @@ export default function AddTaskModal() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({ defaultValues: initialValues });
   //URLsearchParams para entrar en los query strings
   const queryParams = new URLSearchParams(search);
@@ -29,9 +33,32 @@ export default function AddTaskModal() {
   //Creamos variable show (boolean) para pasar a modal en show- asegurando que exista
   const show = modalTask ? true : false;
 
+  //Leemos projectId de params
+  const { projectId } = useParams();
+
+  //Implementamos useMutation porque es POST
+  const { mutate } = useMutation({
+    mutationFn: createTask,
+    onError: error => {
+      toast.error(error.message);
+    },
+    onSuccess: data => {
+      toast.success(data);
+      reset(); //de useForm para reset el form--DA' obvio
+      navigate(pathname, { replace: true }); //el codigo que tenemos en el modal para onClose y asi cerrar el modal-
+    },
+  });
+
+  //Todos los hooks ya estan arriba, recien aca va el guard:
+  if (!projectId) return <p>Proyecto no encontrado</p>;
+
   //función que recibe los datos ya validados y dispara la creación de la tarea-> se la pasamos a handleSubmit del hookForm que esta en el onSUbmit- toma los datos que user ingreso en el formulario una vez que pasaron la validacion-(formData)-- ya limpios... los procesó handleSubmit..
-  const handleForm = async (formData: TaskFormData) => {
-    console.log(formData);
+  const handleForm = (formData: TaskFormData) => {
+    const mutationData = {
+      formData,
+      projectId,
+    };
+    mutate(mutationData);
   };
 
   return (
@@ -70,17 +97,14 @@ export default function AddTaskModal() {
                     Llena el formulario y crea {""}
                     <span className="text-fuchsia-600">una tarea</span>
                   </p>
-                  <form onSubmit={handleSubmit(handleForm)} noValidate
-                    className="mt-10 space-y-3"
-                  >
+                  <form onSubmit={handleSubmit(handleForm)} noValidate className="mt-10 space-y-3">
                     <TaskForm register={register} errors={errors} />
-                    
+
                     <input
                       type="submit"
                       value="Guardar Tarea"
                       className="bg-fuchsia-600 w-full p-3 text-white uppercase font-bold hover:bg-fuchsia-700 cursor-pointer transition-colors"
                     />
-
                   </form>
                 </DialogPanel>
               </TransitionChild>
@@ -97,7 +121,7 @@ export default function AddTaskModal() {
  *
  * Usamos TaskForm como componente reutilizable porque son 2 formularios diferentes -> Crear Tare y Editar Tarea- igual que hicimos en Project.- Usamos form de html, ahi va el onSubmit donde le pasamos handleSubmit de react-hook-form con la funcion que definimos en el useForm para pasarle en el onSubmit.
  *
- *
+ * mutate({formData, projectId}) esto tambien funciona, es un solo argumento en lugar de mutation(mutationData) previamente armado ese objeto.
  *
  *
  */

@@ -227,3 +227,20 @@ Claude dice>>
  * Navegación/URL             → ¿cómo se mueve, qué queda en el historial?
  * ───────────────────────────────────────────────────────────────
  */
+
+ El flujo para las acciones que estamos haciendo en este punto (CRUD de Tareas) es C- crear esta en un formulario, ahi usamos el useForm | const {register, handleSubmit, formState:{errors}} = useForm({defaultValues: initialValues}) en <form onSubmit={handleSubmit(handleForm)} noValidate | handleSubmit del hook llama a handleForm (my Fn) y ahi entra useMutation, es deicr, const handleForm = async (formData: formDataType) => mutate(formData) | y luego se ejecuta: 
+ 
+ const {mutate} = useMutation({
+    mutationFn: myAPIfn,
+    onError:(error)=>{
+      toast.error(error.message)
+
+    },
+    onSuccess:(data)=>{
+      //notificamos data es la que viene de ProjectApi.ts la pasamos a la funcion y ésta se la pasa al toast.
+    toast.success(data); 
+    //redireccionamos
+    navigate("/");
+    },
+
+  });
