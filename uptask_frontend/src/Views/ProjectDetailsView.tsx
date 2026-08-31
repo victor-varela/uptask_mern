@@ -1,24 +1,26 @@
 import { editProjectById } from "@/api/ProjectAPI";
 import AddTaskModal from "@/components/task/AddTaskModal";
+import TaskList from "@/components/task/TaskList";
 import { useQuery } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 
+
 export const ProjectDetailsView = () => {
   //Leo el id con useParams
-  const { projectId } = useParams();
-  if (!projectId) return <p>Proyecto no encontrado</p>;
+  const params = useParams();
+  const projectId = params.projectId! //es la forma de decirle a Ts que projectId existe-. ! y no romper la regla de los hooks de primero instanciar los useSomething y luego los if de guard= antes estaba const {projectId} = useParamas() if(!projectId) return p proyecto no encontrado p
   //Instancio useNavigate para inyectar en la URL datos | click en agregar tarea
   const navigate = useNavigate()
   //UseQuery  | GET para obtener los datos del proyecto
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["projectDetails"],
+    queryKey: ["projectDetails", projectId],
     queryFn: () => editProjectById(projectId),
     retry: false,
   });
   
+  //Despues de los hooks van los guard
   if (isError) return <Navigate to={"/404"} />;
   if (isLoading) return "Cargando...";
-
   if (data)
     return (
       <>
@@ -33,6 +35,10 @@ export const ProjectDetailsView = () => {
             Agregar Tarea
           </button>
         </nav>
+        {/* Lista de tareas | le mando por props */}
+        <TaskList tasks={data.tasks} />
+        
+        {/* Modal para crear Tareas */}
         <AddTaskModal/>
       </>
     );
@@ -60,7 +66,7 @@ if (isError) return <Navigate to={"/404"} />;
 
 navigate(location.pathname + "?newTask=true")} esta linea usa location de la api nativa del window es una forma mas elegante de escribir navigate('?newTask=true') asi igual funciona pero de la otra forma es mas explicito que a la url actual agregale + suma este queryparam
 *
-
+ Esta vista muestra el proyecto y sus tareas.- Es el lugar natural para ello. 
 
  * 
 

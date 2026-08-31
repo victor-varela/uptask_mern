@@ -31,7 +31,7 @@ export async function getProjects() {
 
 export async function editProjectById(id: Project["_id"]) {
   try {
-    const { data } = await api<Project>(`/projects/${id}`);
+    const { data } = await api(`/projects/${id}`);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
@@ -56,7 +56,7 @@ export async function updateProject({ projectId, formData }: UpdateProjectType) 
 
 export async function deleteProject(id: Project["_id"]) {
   try {
-    const {data} = await api.delete<string>(`/projects/${id}`);
+    const { data } = await api.delete<string>(`/projects/${id}`);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {

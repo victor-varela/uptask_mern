@@ -2,10 +2,10 @@ import { Fragment } from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-import type { Project, TaskFormData } from "@/types";
+import type { TaskFormData } from "@/types";
 import { useForm } from "react-hook-form";
 import TaskForm from "./TaskForm";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createTask } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
 
@@ -36,6 +36,9 @@ export default function AddTaskModal() {
   //Leemos projectId de params
   const { projectId } = useParams();
 
+  //Intanciamos queryClient para invalidar la query vieja
+  const queryClient = useQueryClient()
+
   //Implementamos useMutation porque es POST
   const { mutate } = useMutation({
     mutationFn: createTask,
@@ -43,6 +46,8 @@ export default function AddTaskModal() {
       toast.error(error.message);
     },
     onSuccess: data => {
+      //refrescamos /reFetch otro fecth state usando invalidateQueries | queryKey es el nombre de la query que quiero que repita/haga refecth
+      queryClient.invalidateQueries({ queryKey: ["projectDetails", projectId] });
       toast.success(data);
       reset(); //de useForm para reset el form--DA' obvio
       navigate(pathname, { replace: true }); //el codigo que tenemos en el modal para onClose y asi cerrar el modal-
@@ -98,6 +103,8 @@ export default function AddTaskModal() {
                     <span className="text-fuchsia-600">una tarea</span>
                   </p>
                   <form onSubmit={handleSubmit(handleForm)} noValidate className="mt-10 space-y-3">
+                    
+                    {/* Formulario para crear tareas */}
                     <TaskForm register={register} errors={errors} />
 
                     <input
@@ -122,6 +129,7 @@ export default function AddTaskModal() {
  * Usamos TaskForm como componente reutilizable porque son 2 formularios diferentes -> Crear Tare y Editar Tarea- igual que hicimos en Project.- Usamos form de html, ahi va el onSubmit donde le pasamos handleSubmit de react-hook-form con la funcion que definimos en el useForm para pasarle en el onSubmit.
  *
  * mutate({formData, projectId}) esto tambien funciona, es un solo argumento en lugar de mutation(mutationData) previamente armado ese objeto.
- *
+ * 
+ * Para invalidateQueries SIEMPRE pensar si hace falta agregar una variable más para que sea específica la consulta que debemos refrescar--> un proyecto tiene varias tareas, si solo tenemos 'projectDetails' eso refresca todos los proyectos- falta la tarea especifica que debemos refrescar/traer invalidar la query anterior (es lo mismo) y para eso necesitamos projectId----<<<
  *
  */

@@ -228,7 +228,7 @@ Claude dice>>
  * ───────────────────────────────────────────────────────────────
  */
 
- El flujo para las acciones que estamos haciendo en este punto (CRUD de Tareas) es C- crear esta en un formulario, ahi usamos el useForm | const {register, handleSubmit, formState:{errors}} = useForm({defaultValues: initialValues}) en <form onSubmit={handleSubmit(handleForm)} noValidate | handleSubmit del hook llama a handleForm (my Fn) y ahi entra useMutation, es deicr, const handleForm = async (formData: formDataType) => mutate(formData) | y luego se ejecuta: 
+ El flujo para las acciones que estamos haciendo en este punto (CRUD de Tareas) es C- crear esta en un formulario, ahi usamos el useForm | const {register, handleSubmit, formState:{errors}} = useForm({defaultValues: initialValues}) en <form onSubmit={handleSubmit(handleForm)} noValidate | handleSubmit del hook llama a handleForm (my Fn) y ahi entra useMutation, es deicr, const handleForm = async (formData: formDataType) => mutate(formData) | si es un accion GET entra useQuery.-- const {data, isLoading} = useQuery({queryKey: 'myQuerieKey', queryFn: myQuerieFn}) y luego se ejecuta: 
  
  const {mutate} = useMutation({
     mutationFn: myAPIfn,
@@ -240,7 +240,14 @@ Claude dice>>
       //notificamos data es la que viene de ProjectApi.ts la pasamos a la funcion y ésta se la pasa al toast.
     toast.success(data); 
     //redireccionamos
-    navigate("/");
+    navigate("/"); o tambien dependiendo del componente podemos redireccionar como esta abajo
+    navigate(pathname, { replace: true })
+    reset() el formulario usando esta fn de useForm
     },
 
-  });
+  }); 
+
+  Agrupar las acciones onSucces de useMutation es una gran ventaja y mas ordenado!! 
+
+12: Mostramos las tareas en la UI --'R' read: en que vista? en 'Ver Proyecto'--> ProjectDetailsView, esa vista muestra proyecto y tareas. IMPORTANTE: para refrescar en la UI los datos frescos cuando se agrega una tarea hay que incluir el projectId ademas del queryKey en onSucces- esto avisa mas especificamente lo que hay que volver a traer de la Db.
+13.- Creamos TaskList.tsx --> componente que solo muestra las tareas, lo renderizamos en <ProjectDetailsView/> | ProjectDetailsView renderiza TaskList y el AddTaskModal
