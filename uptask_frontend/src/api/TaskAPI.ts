@@ -1,15 +1,30 @@
 import api from "@/lib/axios";
-import type { Project, TaskFormData } from "@/types";
+import type { Project, Task, TaskFormData } from "@/types";
 import { isAxiosError } from "axios";
 
 type TaskAPI = {
   projectId: Project["_id"];
   formData: TaskFormData;
+  taskId: Task["_id"];
 };
 export async function createTask({ projectId, formData }: Pick<TaskAPI, "formData" | "projectId">) {
   try {
     const url = `projects/${projectId}/task`;
     const { data } = await api.post<string>(url, formData);
+
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+
+export async function editTaskById({ projectId, taskId }: Pick<TaskAPI, "projectId" | "taskId">) {
+  try {
+    const url = `projects/${projectId}/task/${taskId}`;
+    const { data } = await api(url);
+    console.log(data);
 
     return data;
   } catch (error) {
@@ -29,7 +44,13 @@ export async function createTask({ projectId, formData }: Pick<TaskAPI, "formDat
     const { data } = await api.post<string>(url, formData); el <string > es porque la respuesta de ese endpoint es un string 'Se creo correctamente' es el type de la RESPUESTA.
  * 
  *
+ * 
  *
- *
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  *
  */

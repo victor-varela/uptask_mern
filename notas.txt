@@ -251,3 +251,4 @@ Claude dice>>
 
 12: Mostramos las tareas en la UI --'R' read: en que vista? en 'Ver Proyecto'--> ProjectDetailsView, esa vista muestra proyecto y tareas. IMPORTANTE: para refrescar en la UI los datos frescos cuando se agrega una tarea hay que incluir el projectId ademas del queryKey en onSucces- esto avisa mas especificamente lo que hay que volver a traer de la Db.
 13.- Creamos TaskList.tsx --> componente que solo muestra las tareas, lo renderizamos en <ProjectDetailsView/> | ProjectDetailsView renderiza TaskList y el AddTaskModal
+14. Habilitamos la Edicion de Tareas: TaskCard tiene el button de editar tarea- Ahi usamos la URL para obetener el id de la tarea -- usamos location la api de Js para obetener el param que definimos en TaskCard (la concatenacion de la url) que va en el useNavigate-

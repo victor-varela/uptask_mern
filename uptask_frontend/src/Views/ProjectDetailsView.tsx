@@ -1,5 +1,6 @@
 import { editProjectById } from "@/api/ProjectAPI";
 import AddTaskModal from "@/components/task/AddTaskModal";
+import EditTaskData from "@/components/task/EditTaskData";
 import TaskList from "@/components/task/TaskList";
 import { useQuery } from "@tanstack/react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
@@ -40,6 +41,7 @@ export const ProjectDetailsView = () => {
         
         {/* Modal para crear Tareas */}
         <AddTaskModal/>
+        <EditTaskData/>
       </>
     );
 };
