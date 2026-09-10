@@ -24,7 +24,6 @@ export async function editTaskById({ projectId, taskId }: Pick<TaskAPI, "project
   try {
     const url = `projects/${projectId}/task/${taskId}`;
     const { data } = await api(url);
-    console.log(data);
 
     return data;
   } catch (error) {
