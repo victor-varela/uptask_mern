@@ -21,8 +21,8 @@ export default function EditTaskData() {
     enabled: !!taskId,
   });
 
-  //3: si hay datos entonces muestra el modal
-  if (data) return <EditTaskModal />;
+  //3: si hay datos entonces muestra el modal- se los paso al modal
+  if (data) return <EditTaskModal data={data} />;
 }
 
 /**

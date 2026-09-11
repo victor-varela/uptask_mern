@@ -1,12 +1,36 @@
 import { Fragment } from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import type { Task, TaskFormData } from "@/types";
+import TaskForm from "./TaskForm";
 
-export default function EditTaskModal() {
-    const navigate = useNavigate()
+type EditTaskModalProps = {
+  data: Task;
+};
+
+export default function EditTaskModal({ data }: EditTaskModalProps) {
+  const navigate = useNavigate();
+  //instanciamos useForm
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TaskFormData>({
+    defaultValues: {
+      name: data.name,
+      description: data.description,
+    },
+  });
+
+  //Instanciamos nuestra funcion para el fomrulario- que va a ir dentro de hanldeSubmit
+  const handleForm = (formData: TaskFormData) => {
+    console.log(formData);
+  };
   return (
     <Transition appear show={true} as={Fragment}>
-      <Dialog as="div" className="relative z-10" onClose={() =>navigate(location.pathname, {replace:true})}>
+      <Dialog as="div" className="relative z-10" onClose={() => navigate(location.pathname, { replace: true })}>
         <TransitionChild
           as={Fragment}
           enter="ease-out duration-300"
@@ -40,7 +64,9 @@ export default function EditTaskModal() {
                   <span className="text-fuchsia-600">este formulario</span>
                 </p>
 
-                <form className="mt-10 space-y-3" noValidate>
+                <form className="mt-10 space-y-3" noValidate onSubmit={handleSubmit(handleForm)}>
+                  {/* mostramos Form-  */}
+                  <TaskForm register={register} errors={errors} />
                   <input
                     type="submit"
                     className=" bg-fuchsia-600 hover:bg-fuchsia-700 w-full p-3  text-white font-black  text-xl cursor-pointer"
@@ -64,6 +90,10 @@ export default function EditTaskModal() {
  * Claude dice>>> AddTaskModal: todo junto — useMutation (POST), el formulario (<TaskForm>), y el modal visual, en un solo componente. Tiene sentido que esté junto porque crear una tarea nueva no depende de ningún dato previo — no hay nada que "buscar" antes de mostrar el formulario vacío.
  
 EditTaskData + EditTaskModal: separado en dos, y la razón de fondo es exactamente la que identificaste — editar requiere primero traer los datos existentes (useQuery, un GET) antes de poder mostrar nada. No podés abrir el modal de edición "vacío" — necesitás esperar a que lleguen los datos de esa tarea puntual para prellenar el formulario. Por eso EditTaskData actúa como una especie de "guardián de datos": hace la consulta, y solo cuando data existe, recién ahí renderiza <EditTaskModal>.
+ * 
+ * A su vez, este componente renderiza el formulario PRE-LLENO para editar por ende usamos useForm con todas sus cositas: register, hanldeSubmit, reset, formState :{errors}, initialValues 'ACA ESTA EL CORE DEL ASUNTO' le pasamos data que ya nos dio EditTaskData. y con esa data CREAMOS DEFAULVALUES del useForm y PUMP ya tenemos el autocmpletado.
+ * El formulario que renderiza este componente es el mismo que habiamos hecho por eso la funcion de re utilizarlo <TaskForm/>
+ * 
  * 
  * 
  */

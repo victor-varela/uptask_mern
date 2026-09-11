@@ -24,7 +24,7 @@ export async function editTaskById({ projectId, taskId }: Pick<TaskAPI, "project
   try {
     const url = `projects/${projectId}/task/${taskId}`;
     const { data } = await api(url);
-
+    
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
