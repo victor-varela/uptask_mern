@@ -74,7 +74,13 @@ navigate(location.pathname + "?newTask=true")} esta linea usa location de la api
 *
  Esta vista muestra el proyecto y sus tareas.- Es el lugar natural para ello. 
 
- * 
+ * OJO: el componente ViewTaskModal esta invocado acá y ese componente tiene dentro un useQuery- por lo tanto, siempre va a ejecutarse la consulta a la api A MENOS que modifiquemos la query con el nuevo truco del mago:  enabled:!!taskId | esto va dentro de la configuracion de useQuery ===>    
+ const {data, isError, error} = useQuery({
+         queryKey:["viewTask", taskId],
+         queryFn: ()=> editTaskById({projectId, taskId}),
+         enabled:!!taskId ==== AQUI
+ 
+     })
 
 
 

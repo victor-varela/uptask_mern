@@ -72,7 +72,7 @@ export async function deleteTask({ projectId, taskId }: Pick<TaskAPI, "projectId
  *
  * Me doy cuenta lo importante de tener un type TaskAPI con todas las propiedades task y su type dentro para poder usalros en las Api Fns con PICK y no importa si crece el type despues con Pick me aseguro que no se mezclen!!
  * 
- * 
+ * Para Ver Tarea usamos la Fn editTaskById, tal vez el nombre no es tan generico pero hace lo mismo. podria haber sido getTaskById
  * 
  * 
  * 

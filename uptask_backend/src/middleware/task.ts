@@ -36,7 +36,7 @@ export async function validateTask(req: Request, res: Response, next: NextFuncti
     next();
   } catch (error) {
     console.log(error);
-    res.status(500).send("Hubo un error");
+    res.status(500).json({error: "Hubo un error"});
   }
   //treamos el codigo que tenia el conrtolador
 }

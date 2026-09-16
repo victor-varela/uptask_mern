@@ -269,3 +269,5 @@ onClose={() => navigate(location.pathname, { replace: true }) | elimina la ultim
 
 15. Implementamos la 'D' delete del CRUD: eliminar tarea. Creamos la api fn en TaskAPI- deleteTask- Implementamos mutate porque es un DELETE en el onClick de TaskCard- 
 16.- Para implementar 'Ver Tarea' de TaskCard, hacemos el mismo patron de: user click en Ver Tarea- Agregamos en URL el id de la tarea - el modal de ver tarea REACCIONA a la URL- | Creamos un nuevo componente en task/ ViewTaskModal.tsx | Este modal no invocamos en ProjectDetailsView, tranquilo, no se va a mostrar todo el tiempo porque lo hacemos reactivo a la URL
+
+CTRL + } = COMENTARIOS JEJEJE NADA QUE VER PERO LO DESCURBI
