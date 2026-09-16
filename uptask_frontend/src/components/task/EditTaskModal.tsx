@@ -1,15 +1,19 @@
 import { Fragment } from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import type { Task, TaskFormData } from "@/types";
 import TaskForm from "./TaskForm";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateTask } from "@/api/TaskAPI";
+import { toast } from "react-toastify";
 
 type EditTaskModalProps = {
   data: Task;
+  taskId: Task["_id"];
 };
 
-export default function EditTaskModal({ data }: EditTaskModalProps) {
+export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
   const navigate = useNavigate();
   //instanciamos useForm
   const {
@@ -24,9 +28,38 @@ export default function EditTaskModal({ data }: EditTaskModalProps) {
     },
   });
 
+  //Instaciamos useMutation (PUT)
+  const { mutate } = useMutation({
+    mutationFn: updateTask,
+    onError: error => {
+      toast.error(error.message);
+    },
+    onSuccess: data => {
+      //refrescamos /reFetch otro fecth state usando invalidateQueries | queryKey es el nombre de la query que quiero que repita/haga refecth
+      queryClient.invalidateQueries({ queryKey: ["projectDetails", projectId] });
+      toast.success(data);
+      reset(); //de useForm para reset el form--DA' obvio
+      navigate(location.pathname, { replace: true }); //el codigo que tenemos en el modal para onClose y asi cerrar el modal-
+    },
+  });
+
+  //Leemos projectId de params- lo necesita la api fn-> mutate (aplicamos ! para Ts relaje)
+  const params = useParams();
+  const projectId = params.projectId!;
+
+  //Instaciamos queryClient para invalidar la query y refrescar los datos
+  const queryClient = useQueryClient();
+
   //Instanciamos nuestra funcion para el fomrulario- que va a ir dentro de hanldeSubmit
   const handleForm = (formData: TaskFormData) => {
-    console.log(formData);
+    //Armamos el obj que necesita la api fn--> updateTask| ademas de los Ids tambien la dataForm actualizada
+    const mutationData = {
+      projectId,
+      taskId,
+      formData,
+    };
+    //llamamos a mutate | haz lo tuyo
+    mutate(mutationData);
   };
   return (
     <Transition appear show={true} as={Fragment}>
@@ -94,6 +127,6 @@ EditTaskData + EditTaskModal: separado en dos, y la razón de fondo es exactamen
  * A su vez, este componente renderiza el formulario PRE-LLENO para editar por ende usamos useForm con todas sus cositas: register, hanldeSubmit, reset, formState :{errors}, initialValues 'ACA ESTA EL CORE DEL ASUNTO' le pasamos data que ya nos dio EditTaskData. y con esa data CREAMOS DEFAULVALUES del useForm y PUMP ya tenemos el autocmpletado.
  * El formulario que renderiza este componente es el mismo que habiamos hecho por eso la funcion de re utilizarlo <TaskForm/>
  * 
- * 
+ * Para actualizar necesitamos hacer la mutacion / vamos a /api/TaskAPI.ts -> updateTask
  * 
  */

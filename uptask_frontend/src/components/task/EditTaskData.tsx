@@ -1,6 +1,6 @@
 import { editTaskById } from "@/api/TaskAPI";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation, useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import EditTaskModal from "./EditTaskModal";
 
 export default function EditTaskData() {
@@ -15,14 +15,18 @@ export default function EditTaskData() {
   // const {projectId} = useParams()!no funciona porque esta tomando TODO el OBJ que devuelve useParams como ! no projectId en especifico.
 
   //2:Consultar a la api | useQuery
-  const { data } = useQuery({
+  const { data, isError } = useQuery({
     queryKey: ["task", taskId],
     queryFn: () => editTaskById({ projectId, taskId }),
     enabled: !!taskId,
+    retry:false
   });
 
+  //si taskId es incorrecto o no existe eje- user escribe 1 al final o x  (caso extremo-user lo cambia manualmente) dirijo a 404 | isError devuelve boolean si la query no encuentra algo | mismo codigo que en EditProjectView- si la URL es incorrecta REACCIONAMOS a eso y dirijo a 404
+  if(isError) return <Navigate to={'/404'}/>
+
   //3: si hay datos entonces muestra el modal- se los paso al modal
-  if (data) return <EditTaskModal data={data} />;
+  if (data) return <EditTaskModal data={data} taskId={taskId} />;
 }
 
 /**
@@ -47,7 +51,7 @@ export default function EditTaskData() {
  * queryKey:['task', taskId] --> le paso la variable taskId para que revise si cambio entonces debe volver a hacer la consulta. 'task' es el nombre de la queryKey y taskId es como un 'array de dependencia' mas o menos.
  * 
  * 
- * Problema: este componente se renderiza desde ProjectDetailsView | ProjectDetailsView se muestra con una URL de project/projectId PERO como tiene dentro a EditTaskData y EditTaskData necesita ademas de projectId el taskId da error: undefined e intenta la query varias veces, ademas marca a task/null | hace algo asi: undefined
+ * Problema: este componente se renderiza desde ProjectDetailsView | ProjectDetailsView se muestra con una URL de project/projectId PERO como tiene dentro a EditTaskData y EditTaskData necesita ademas de projectId el taskId da error y aparte de eso es por si el usuario elimina el taskId de la URL (son ese tipo de cosas que uno no pensaria que alguien las puede hacer pero el profesor SI piensa en eso.. es decir.. como ROMPER la UI o la APP. En otras palabras, cuando pueda identificar algo que rompe la app --> buscar la forma de evitarlo- En este caso, identificamos que los componentes son FUNCIONALES O DEPENDEN DE LA URL, entonces-- > debemos BLINDAR la URL o al menos RESPONDER si la URL tiene un error (que buena reflexion Victorino)): undefined e intenta la query varias veces, ademas marca a task/null | hace algo asi: undefined
 installHook.js:1 undefined
 TaskAPI.ts:26  GET http://localhost:4000/api/projects/6a450aa1704fcdba970a4248/task/null 500 (Internal Server Error)
  *  

@@ -251,4 +251,21 @@ Claude dice>>
 
 12: Mostramos las tareas en la UI --'R' read: en que vista? en 'Ver Proyecto'--> ProjectDetailsView, esa vista muestra proyecto y tareas. IMPORTANTE: para refrescar en la UI los datos frescos cuando se agrega una tarea hay que incluir el projectId ademas del queryKey en onSucces- esto avisa mas especificamente lo que hay que volver a traer de la Db.
 13.- Creamos TaskList.tsx --> componente que solo muestra las tareas, lo renderizamos en <ProjectDetailsView/> | ProjectDetailsView renderiza TaskList y el AddTaskModal
-14. Habilitamos la Edicion de Tareas: TaskCard tiene el button de editar tarea- Ahi usamos la URL para obetener el id de la tarea -- usamos location la api de Js para obetener el param que definimos en TaskCard (la concatenacion de la url) que va en el useNavigate-
+14. Habilitamos la Edicion de Tareas: TaskCard tiene el button de editar tarea- Ahi usamos la URL para obetener el id de la tarea -- usamos location la api de Js para obetener el param que definimos en TaskCard (la concatenacion de la url) que va en el useNavigate- Para editar la tarea nos fijamos que el endpoint en el backend que hace eso necesita projectId y taskId por eso lo tenemos que enviar en la mutacion en EditTaskModal. projectId lo obtenemos mismo en el componente con useParams y taskId se lo enviamos por props desde EditTaskData a EditTaskModal.
+
+== MANEJO DE URLs=== 
+const taskId = new URLSearchParams(search).get("editTask")!; | esto buscar un query param | ?taskId=myTaskId | new URLSearchParams(search).get("myTaskId")
+
+  const queryParams = new URLSearchParams(search);
+  const modalTask = queryParams.get("newTask"); | es la forma mas larga de la anterior pero es lo mismo. 
+
+const params = useParams();
+const projectId = params.projectId! | esto busca tambien un query param pero que NO es despues de un ?
+
+onClick={()=> navigate(location.pathname + `?editTask=${task._id}`)}; | esto AGREGA un STRING a la URL, se usa para el ? | usa la fn navigate y la api location de Js | location.pathname da la URL actual | se usa en TaskCard para Editar Tarea- agrega la URL y la hace funcional al componente 
+
+onClose={() => navigate(location.pathname, { replace: true }) | elimina la ultima entrada la URL 
+====================
+
+15. Implementamos la 'D' delete del CRUD: eliminar tarea. Creamos la api fn en TaskAPI- deleteTask- Implementamos mutate porque es un DELETE en el onClick de TaskCard- 
+16.- Para implementar 'Ver Tarea' de TaskCard, hacemos el mismo patron de: user click en Ver Tarea- Agregamos en URL el id de la tarea - el modal de ver tarea REACCIONA a la URL- | Creamos un nuevo componente en task/ ViewTaskModal.tsx | Este modal no invocamos en ProjectDetailsView, tranquilo, no se va a mostrar todo el tiempo porque lo hacemos reactivo a la URL

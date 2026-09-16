@@ -24,7 +24,32 @@ export async function editTaskById({ projectId, taskId }: Pick<TaskAPI, "project
   try {
     const url = `projects/${projectId}/task/${taskId}`;
     const { data } = await api(url);
-    
+
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+
+export async function updateTask({ projectId, taskId, formData }: Pick<TaskAPI, "projectId" | "taskId" | "formData">) {
+  try {
+    const url = `projects/${projectId}/task/${taskId}`;
+    const { data } = await api.put(url, formData);
+
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+
+export async function deleteTask({ projectId, taskId }: Pick<TaskAPI, "projectId" | "taskId">) {
+  try {
+    const url = `projects/${projectId}/task/${taskId}`;
+    const { data } = await api.delete<string>(url);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
@@ -43,8 +68,9 @@ export async function editTaskById({ projectId, taskId }: Pick<TaskAPI, "project
     const { data } = await api.post<string>(url, formData); el <string > es porque la respuesta de ese endpoint es un string 'Se creo correctamente' es el type de la RESPUESTA.
  * 
  *
- * 
+ * Para actualizar una tarea, me fijo que necesita ese endpoint en postman-> projectId | taskId y devuelve 'name' 'description' 
  *
+ * Me doy cuenta lo importante de tener un type TaskAPI con todas las propiedades task y su type dentro para poder usalros en las Api Fns con PICK y no importa si crece el type despues con Pick me aseguro que no se mezclen!!
  * 
  * 
  * 
