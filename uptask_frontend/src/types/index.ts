@@ -33,13 +33,15 @@ export type ProjectFormData = Pick<Project, "clientName" | "projectName" | "desc
 export const taskStatusSchema = z.enum(["pending", "onHold", "inProgress", "underReview", "completed"]);
 
 
-//Creamos schema para task=> Zod para validar respuesta
+//Creamos schema para task=> Zod para validar respuesta- createdAt y updatedAt son fechas pero vienen como strings
 export const taskSchema = z.object({
   _id: z.string(),
   name: z.string(),
   description: z.string(),
   project: z.string(),
   status: taskStatusSchema,
+  createdAt: z.string(), 
+  updatedAt: z.string()
 });
 
 

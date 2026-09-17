@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import type { Project, Task, TaskFormData } from "@/types";
+import { taskSchema, type Project, type Task, type TaskFormData } from "@/types";
 import { isAxiosError } from "axios";
 
 type TaskAPI = {
@@ -24,8 +24,11 @@ export async function editTaskById({ projectId, taskId }: Pick<TaskAPI, "project
   try {
     const url = `projects/${projectId}/task/${taskId}`;
     const { data } = await api(url);
-
-    return data;
+    //Aseguramos que la respuesta tenga el schema de Task y lo retornamos para poder tener autocompletado en ViewTaskModal
+    const response = taskSchema.safeParse(data)
+    if(response.success){
+      return response.data
+    }
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);

@@ -20,7 +20,7 @@ const initialStatusGroups: GroupedTasks = {
 };
 
 //Diccionario de tasks para pintar en UI
-const statusTransalations: { [key: string]: string } = {
+export const statusTransalations: { [key: string]: string } = {
   pending: "Pendiente",
   onHold: "En espera",
   inProgress: "En progreso",

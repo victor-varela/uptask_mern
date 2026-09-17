@@ -271,3 +271,5 @@ onClose={() => navigate(location.pathname, { replace: true }) | elimina la ultim
 16.- Para implementar 'Ver Tarea' de TaskCard, hacemos el mismo patron de: user click en Ver Tarea- Agregamos en URL el id de la tarea - el modal de ver tarea REACCIONA a la URL- | Creamos un nuevo componente en task/ ViewTaskModal.tsx | Este modal no invocamos en ProjectDetailsView, tranquilo, no se va a mostrar todo el tiempo porque lo hacemos reactivo a la URL
 
 CTRL + } = COMENTARIOS JEJEJE NADA QUE VER PERO LO DESCURBI
+
+16- Reescribimos el schema de task para agregar los campos createdAt y updatedAt- son strings- y creamos /utils/utils.ts para un formatter de fechas y renderizar en UI de ViewTaskModal. Se recomienda tambien librerias de fechas como DateFns, TemporalJs-
