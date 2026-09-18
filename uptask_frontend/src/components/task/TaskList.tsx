@@ -1,5 +1,6 @@
 import type { Task } from "@/types";
 import TaskCard from "./TaskCard";
+import { statusTransalations } from "@/locales/es";
 
 type TaskListProps = {
   tasks: Task[];
@@ -19,14 +20,8 @@ const initialStatusGroups: GroupedTasks = {
   completed: [],
 };
 
-//Diccionario de tasks para pintar en UI
-export const statusTransalations: { [key: string]: string } = {
-  pending: "Pendiente",
-  onHold: "En espera",
-  inProgress: "En progreso",
-  underReview: "En revision",
-  completed: "Completada",
-};
+//Diccionario de tasks para pintar en UI | lo importamos de /locales/es.ts
+
 
 //Diccionario para pintar los border un UI
 const statusStyles: {[key:string]:string} ={

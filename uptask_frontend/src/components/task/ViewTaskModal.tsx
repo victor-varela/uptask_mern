@@ -4,9 +4,8 @@ import { useLocation, useNavigate, useParams, Navigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query";
 import { editTaskById } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
-import type { Task } from "@/types";
-import { statusTransalations } from "./TaskList";
 import { dateFormatter } from "@/utils/utils";
+import { statusTransalations } from "@/locales/es";
 
 export default function ViewTaskModal() {
   //instancio navigate
@@ -76,7 +75,15 @@ export default function ViewTaskModal() {
                     </DialogTitle>
                     <p className="text-lg text-slate-500 mb-2">Descripción: {data.description}</p>
                     <div className="my-5 space-y-3">
-                      <label className="font-bold">Estado Actual: {statusTransalations[data.status]}</label>
+                      <label className="font-bold">Estado Actual:</label>
+                      {/* agregamos un select para mostrar y cambiar el estado | */}
+                      <select className="w-full p-3 bg-white border border-gray-300" defaultValue={data.status}>
+                        {Object.entries(statusTransalations).map(([key, value]) => (
+                          <option key={key} value={key}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </DialogPanel>
                 </TransitionChild>
@@ -129,40 +136,55 @@ export default function ViewTaskModal() {
  *
  * **
  * DIFERENCIA useQuery vs useMutation -- CUANDO se disparan:
- * 
- * useQuery    -> se dispara AUTOMATICO, apenas el componente se monta 
+ *
+ * useQuery    -> se dispara AUTOMATICO, apenas el componente se monta
  *                (o cuando cambia queryKey/enabled). NO lo invoco a mano.
  * useMutation -> se dispara SOLO cuando YO llamo mutate(datos) a mano,
- *                siempre en respuesta a una accion del usuario (submit, 
- *                click, confirm) -- porque recien ahi tengo los datos 
- *                finales y la certeza de que el usuario quiere hacer esa 
+ *                siempre en respuesta a una accion del usuario (submit,
+ *                click, confirm) -- porque recien ahi tengo los datos
+ *                finales y la certeza de que el usuario quiere hacer esa
  *                operacion.
- * 
+ *
  * DIFERENCIA en como se ESCRIBEN mutationFn vs queryFn (por lo anterior):
- * 
- * mutationFn: createTask 
+ *
+ * mutationFn: createTask
  *   -> referencia DIRECTA, sin () ni argumentos.
- *   -> Los argumentos llegan DESPUES, en el momento de mutate(datos) 
+ *   -> Los argumentos llegan DESPUES, en el momento de mutate(datos)
  *      -- por eso no hace falta armar un callback ahora.
- * 
+ *
  * queryFn: () => editTaskById({ projectId, taskId })
- *   -> SIEMPRE con arrow function (callback), porque useQuery no me da 
- *      ningun lugar para pasarle argumentos mas adelante (no existe un 
+ *   -> SIEMPRE con arrow function (callback), porque useQuery no me da
+ *      ningun lugar para pasarle argumentos mas adelante (no existe un
  *      equivalente a mutate() para queries).
- *   -> Como projectId y taskId YA estan disponibles como variables del 
- *      componente en este momento, los "empaqueto" en el callback para 
+ *   -> Como projectId y taskId YA estan disponibles como variables del
+ *      componente en este momento, los "empaqueto" en el callback para
  *      que se usen cuando React Query decida ejecutar la funcion.
- * 
- * REGLA GENERAL: 
+ *
+ * REGLA GENERAL:
  * si la funcion necesita argumentos que YA tengo ahora -> callback (queryFn).
- * si la funcion va a recibir sus argumentos DESPUES, por otra via (mutate) 
+ * si la funcion va a recibir sus argumentos DESPUES, por otra via (mutate)
  * -> referencia directa, sin envolver (mutationFn).
  *************************************
  * REESCRIBIMOS el schema de Task en /types/index.ts para agregar los campos createdAt y updatedAt--
  *
  * Usamos nuestra dateFormatter de utils que tiene metodos de Js puros para las fechas.. es un copia y pega.
  *
+ * Para mostrar y CAMBIAR el status usamos un select | usamos el diccionario statusTranslations y lo convertimos a array con object.entries()
  *
- *
+ *                  <select 
+                        className="w-full bg-white border border-gray-300" 
+                        defaultValue={data.status}
+                        >
+                          {Object.entries(statusTransalations).map(([key, value]) => (
+                            <option key={key} value={value}>{value}</option>
+                          ))}
+                        </select>
+ *      el value del select, el que va a ir a la API es el value del array.. es decir, el diccionario en los values tiene los nombres en español para la UI| option {value} option | pero los keys son los nombres que espera recibir la API por eso se los pasamos asi. key={key} value={key}
+ * Aplicamos destructuring de array [key, value] y eso lo pasamos en los options y en la key del option para que react no reviente.
+ * 
+ * 
+ * 
+ * 
+ * 
  *
  */

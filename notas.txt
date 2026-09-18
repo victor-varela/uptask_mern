@@ -273,3 +273,4 @@ onClose={() => navigate(location.pathname, { replace: true }) | elimina la ultim
 CTRL + } = COMENTARIOS JEJEJE NADA QUE VER PERO LO DESCURBI
 
 16- Reescribimos el schema de task para agregar los campos createdAt y updatedAt- son strings- y creamos /utils/utils.ts para un formatter de fechas y renderizar en UI de ViewTaskModal. Se recomienda tambien librerias de fechas como DateFns, TemporalJs-
+17- Para mostrar el estado de las tareas y cambiarlos, usamos un select en ViewTaskModal| trasladamos el diccionario de status a una carpeta src/locacles/es.ts
