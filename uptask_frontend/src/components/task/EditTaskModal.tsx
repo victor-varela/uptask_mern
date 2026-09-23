@@ -37,6 +37,7 @@ export default function EditTaskModal({ data, taskId }: EditTaskModalProps) {
     onSuccess: data => {
       //refrescamos /reFetch otro fecth state usando invalidateQueries | queryKey es el nombre de la query que quiero que repita/haga refecth
       queryClient.invalidateQueries({ queryKey: ["projectDetails", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["task", taskId] });
       toast.success(data);
       reset(); //de useForm para reset el form--DA' obvio
       navigate(location.pathname, { replace: true }); //el codigo que tenemos en el modal para onClose y asi cerrar el modal-

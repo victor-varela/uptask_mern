@@ -1,11 +1,12 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect} from "react";
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@headlessui/react";
 import { useLocation, useNavigate, useParams, Navigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { editTaskById } from "@/api/TaskAPI";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { editTaskById, updateTaskStatus } from "@/api/TaskAPI";
 import { toast } from "react-toastify";
 import { dateFormatter } from "@/utils/utils";
 import { statusTransalations } from "@/locales/es";
+import type { Task } from "@/types";
 
 export default function ViewTaskModal() {
   //instancio navigate
@@ -30,11 +31,37 @@ export default function ViewTaskModal() {
     retry: false,
   });
 
+  //Este useEffect es por un error que daba react al renderizar el toast
   useEffect(() => {
     if (isError) {
       toast.error(error.message);
     }
   }, [isError, error]);
+
+  //Invalidar la query
+  const queryClient = useQueryClient()
+
+  //Instanciamos la mutation
+  const { mutate } = useMutation({
+    mutationFn: updateTaskStatus,
+    onError: error => {
+      toast.error(error.message);
+    },
+    onSuccess: data => {
+      toast.success(data);
+      queryClient.invalidateQueries({queryKey:["projectDetails", projectId]}) //refetch en projectdetails
+      queryClient.invalidateQueries({queryKey:["viewTask", taskId]})//refetch en ViewTaskModal
+      navigate(pathname, {replace:true})//para cerrar el modal
+    },
+  });
+
+  //Escribimos hanlder fn para el onChange event
+  const handlerChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  
+    const status =e.target.value as Task["status"]
+    const mutationData = {projectId, taskId, status}
+    mutate(mutationData)
+  };
 
   if (isError) return <Navigate to={`/projects/${projectId}`} />;
 
@@ -77,7 +104,11 @@ export default function ViewTaskModal() {
                     <div className="my-5 space-y-3">
                       <label className="font-bold">Estado Actual:</label>
                       {/* agregamos un select para mostrar y cambiar el estado | */}
-                      <select className="w-full p-3 bg-white border border-gray-300" defaultValue={data.status}>
+                      <select
+                        className="w-full p-3 bg-white border border-gray-300"
+                        defaultValue={data.status}
+                        onChange={handlerChange}
+                      >
                         {Object.entries(statusTransalations).map(([key, value]) => (
                           <option key={key} value={key}>
                             {value}
@@ -182,7 +213,7 @@ export default function ViewTaskModal() {
  *      el value del select, el que va a ir a la API es el value del array.. es decir, el diccionario en los values tiene los nombres en español para la UI| option {value} option | pero los keys son los nombres que espera recibir la API por eso se los pasamos asi. key={key} value={key}
  * Aplicamos destructuring de array [key, value] y eso lo pasamos en los options y en la key del option para que react no reviente.
  * 
- * 
+ * Cambiar el estado de una tarea: el enfoque es hacer la actualizacion en la api useMutation POST - anclarlo en el onchange del select - invalidar la querys para refecth tanto de ProjectDetailsView como la del ViewTakModal actual para ACTUALIZAR los dos componentes al mismo tiempo, es donde BRILLA useQuery | yo habia pensado el onchange con un state viejo y querido pero el profe lo hizo con react.Html.element
  * 
  * 
  * 
