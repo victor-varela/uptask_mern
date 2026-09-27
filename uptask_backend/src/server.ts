@@ -5,6 +5,7 @@ import cors from 'cors'
 import morgan from "morgan";
 import { corsConfig } from "./config/cors";
 import projectRoutes from "./routes/projectRoutes"; //Default import → sin llaves, podés ponerle cualquier nombre.
+import authRoutes from "./routes/authRoutes"; //Default import → sin llaves, podés ponerle cualquier nombre.
 
 /**
  *  export default algo  →  se importa SIN llaves  →  cualquier nombre
@@ -29,6 +30,10 @@ app.use(morgan('dev'))
 app.use(express.json());
 
 //Routes- Enlazador principal de rutas
+
+
+//Rutas de Auth- va antes de las otras porque primero se autentica el user
+app.use("/api/auth", authRoutes)
 
 //Rutas de api/projects
 app.use("/api/projects", projectRoutes); // el export del archivo projectRoutes.ts es router PERO como es DEFAULT aqui le cambiamos el nombre a projectRoutes que coincide con el nombre del arhivo. ES LO MISMO si importamos router.

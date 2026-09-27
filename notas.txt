@@ -277,4 +277,23 @@ CTRL + } = COMENTARIOS JEJEJE NADA QUE VER PERO LO DESCURBI
 
 NOTA: para leer sobre formularios de react esta esta pag : https://yakhil25.medium.com/react-forms-controlled-components-and-validation-54fe0bbc4fe6 muyy buena! formularios y componentes | React Forms
 
-18: Actualizamos estado de las tareas: creamos la api fn en TaskAPI- 
+18: Actualizamos estado de las tareas: creamos la api fn en TaskAPI- la accion viene del onchange - creamos hanlderChange fn y ahi asignamos a status e.target.value , le pasamos los datos a la mutacion previemante configurada, la api fn espera projectId task y status, status viaja aparte de la URL en un objeto que desctrucutramos en el controller.
+
+
+Nota: cuando te das cuenta que la UI no refleja un cambio, fijate en la palmerita de useQuery del Navegador la herramienta de desarrollo.- ahi ves cual es la queryKey que se dispara y LISTO, puedes ver que esa queryKey debes invalidar para que refresque la UI.
+
+19: Agregamos Autenticacion al proyecto--- Volvemos al backend y creamos el modelo de User | /models/User.ts
+20: Creamos un router para la Autenticacion. vamos a /routes/authRoutes.ts -- instale restclient de VsCode para hacer la request porque postman se jodio.. en el backend /requests/auth.http
+PROBLEMA: como la Autenticacion la estamos haciendo DESPUES que ya habiamos "terminado" el backend, los endpoints, etc.. ya habiamos generedao una whitelist que incluye el frontendURL y estamos VOLVIENDO a TESTEAR APIs tengo que hacer un truquito, saltarme Error de CORS. Para eso en cors.ts en el backend incluimos a undefined que es el origin que devuelve restclient, postman, thunderClient, etc... y modificamos el packageJson con un script adicional
+
+packageJson:
+  "scripts": {
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev:api": "nodemon --exec ts-node src/index.ts --api"  
+  },
+
+  "dev:api": "nodemon --exec ts-node src/index.ts --api"  //este es nuevo | --api es una bandera "variable" y para seguir desarrollando la nueva ruta auth y que el frontend funcione corremos el backend con npm run dev:api. Ese script npm run dev:api TIENE el --api, y eso es lo que vamos a verificar en cors.ts y si existe lo agregamos en el whitelist. | es como estar en modo dev-api jaja literalmente.. modo desarrollo y api.
+
+  En cors.ts recuperamos --api con process.argv | este argv ya lo habia visto en otro proyecto.. chekalo por ahi.. eso devuelve un array y lo treamos en la posicion que tiene la bandera --api, en este caso es [2] y listo.. si tenemos --api lo pusheamos a la whitelist. pusheamos undefined porque eso es lo que tira un origin "falso" como restclient, postman, thunderClient, etc.. un navegador normal si tiene un origin definido por eso lo validamos const whitelist = [process.env.FRONTEND_URL] pero mientras estamos en modo dev--api usamos undefined.. eso es lo que nos permite saber que estamos enviado peticiones con un cliente "falso- mock" como restclient, postman, thunderClient, etc..
+
+  21: Seguimos trabajando en el backend. Cramos el controller para Autenticacion. Los endpoints de Autenticacion en su mayoria son POST. 
