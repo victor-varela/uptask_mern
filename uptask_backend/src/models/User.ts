@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
 //1
 export interface IUser extends Document {
@@ -9,7 +9,7 @@ export interface IUser extends Document {
 }
 
 //2
-const UserSchema = new Schema({
+const UserSchema:Schema = new Schema({
   email: {
     type: String,
     require: true,

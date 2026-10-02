@@ -277,13 +277,13 @@ CTRL + } = COMENTARIOS JEJEJE NADA QUE VER PERO LO DESCURBI
 
 NOTA: para leer sobre formularios de react esta esta pag : https://yakhil25.medium.com/react-forms-controlled-components-and-validation-54fe0bbc4fe6 muyy buena! formularios y componentes | React Forms
 
-18: Actualizamos estado de las tareas: creamos la api fn en TaskAPI- la accion viene del onchange - creamos hanlderChange fn y ahi asignamos a status e.target.value , le pasamos los datos a la mutacion previemante configurada, la api fn espera projectId task y status, status viaja aparte de la URL en un objeto que desctrucutramos en el controller.
+18- Actualizamos estado de las tareas: creamos la api fn en TaskAPI- la accion viene del onchange - creamos hanlderChange fn y ahi asignamos a status e.target.value , le pasamos los datos a la mutacion previemante configurada, la api fn espera projectId task y status, status viaja aparte de la URL en un objeto que desctrucutramos en el controller.
 
 
 Nota: cuando te das cuenta que la UI no refleja un cambio, fijate en la palmerita de useQuery del Navegador la herramienta de desarrollo.- ahi ves cual es la queryKey que se dispara y LISTO, puedes ver que esa queryKey debes invalidar para que refresque la UI.
 
-19: Agregamos Autenticacion al proyecto--- Volvemos al backend y creamos el modelo de User | /models/User.ts
-20: Creamos un router para la Autenticacion. vamos a /routes/authRoutes.ts -- instale restclient de VsCode para hacer la request porque postman se jodio.. en el backend /requests/auth.http
+19- Agregamos Autenticacion al proyecto--- Volvemos al backend y creamos el modelo de User | /models/User.ts
+20- Creamos un router para la Autenticacion. vamos a /routes/authRoutes.ts -- instale restclient de VsCode para hacer la request porque postman se jodio.. en el backend /requests/auth.http
 PROBLEMA: como la Autenticacion la estamos haciendo DESPUES que ya habiamos "terminado" el backend, los endpoints, etc.. ya habiamos generedao una whitelist que incluye el frontendURL y estamos VOLVIENDO a TESTEAR APIs tengo que hacer un truquito, saltarme Error de CORS. Para eso en cors.ts en el backend incluimos a undefined que es el origin que devuelve restclient, postman, thunderClient, etc... y modificamos el packageJson con un script adicional
 
 packageJson:
@@ -296,4 +296,15 @@ packageJson:
 
   En cors.ts recuperamos --api con process.argv | este argv ya lo habia visto en otro proyecto.. chekalo por ahi.. eso devuelve un array y lo treamos en la posicion que tiene la bandera --api, en este caso es [2] y listo.. si tenemos --api lo pusheamos a la whitelist. pusheamos undefined porque eso es lo que tira un origin "falso" como restclient, postman, thunderClient, etc.. un navegador normal si tiene un origin definido por eso lo validamos const whitelist = [process.env.FRONTEND_URL] pero mientras estamos en modo dev--api usamos undefined.. eso es lo que nos permite saber que estamos enviado peticiones con un cliente "falso- mock" como restclient, postman, thunderClient, etc..
 
-  21: Seguimos trabajando en el backend. Cramos el controller para Autenticacion. Los endpoints de Autenticacion en su mayoria son POST. 
+  21- Seguimos trabajando en el backend. Cramos el controller para Autenticacion. Los endpoints de Autenticacion en su mayoria son POST. 
+
+  22- Armamos el metodo de crear usuario en la DB. Hay que hashear los password. Utilizamos bcrypt para hashear los password. hay que estar pendientes a las actualizaciones de las librerias. | npm i bcrypt y npm i -D @types/bcrypt | Prevenimos user duplicados con User.findOne() de mongoose.
+
+  23- Generamos Token para enviar por email y confirmar el registro. Creamos un Modelo nuevo. /models/Token.ts. Aca usamos de nuevo ref, en el schema. El token lo hacemos a mano con Js con una fn en /utils
+  24- En AuthController incluimos todo el proceso de creacion de nuevo usuario, nuevo token, prevenir duplicados y guardar en DB.
+  
+  25- Para enviar mails usamos en dev => mailtrap y en prodccion => resend. | En mailtrap: /sandboxes/ nueva sandbox | instalar por medio de node.js => nodmailer es la libreria para integracion. | en src/config creamos nodemailer.ts y pegamos el codigo de codesamples de mailtrap para node.js es una fn transport que usamos CADA VEZ que enviamos un mail en desarrollo| el codigo de integracion lo saque de la doc de mailtrap | instalamos nodemailer npm i nodemailer y npm i -D @types/nodemailer | OJO 
+
+  26- Creamos un archivo para separar el envio de emails. src/emails/AuthEmail.ts | es una clase. | Es conveniente que las fn de envio de mail sean async, con su await correspondiente.. porque si hay algun error en el envio queremos saberlo para menejarlo. VsCode dice que no es necesario pero es mejor tener control por si no llega el correo no vayamos a cambiar a true el confirmed de user sin estar seguros.
+
+  27- Confirmamos el usuario en base al token. Creamos un endpoint nuevo confirm-account en /routes/authRoutes

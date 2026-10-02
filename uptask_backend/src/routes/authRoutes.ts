@@ -5,7 +5,7 @@ import { handlerInputErrors } from "../middleware/validation";
 
 const router = Router();
 
-//Peticion de prueba
+//Crear cuenta
 router.post(
   "/",
   body("name").notEmpty().withMessage("El nombre es obligatorio"),
@@ -18,9 +18,15 @@ router.post(
     return true
   }),
   handlerInputErrors,
-  AuthController.CreateAccount,
+  AuthController.createAccount,
 );
 
+//Confirmar cuenta
+router.post("/confirm-account",
+    body("token").notEmpty().withMessage("El token es obligatorio"),
+    handlerInputErrors,
+    AuthController.confirmAccount
+)
 export default router;
 
 /**
