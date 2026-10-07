@@ -307,4 +307,8 @@ packageJson:
 
   26- Creamos un archivo para separar el envio de emails. src/emails/AuthEmail.ts | es una clase. | Es conveniente que las fn de envio de mail sean async, con su await correspondiente.. porque si hay algun error en el envio queremos saberlo para menejarlo. VsCode dice que no es necesario pero es mejor tener control por si no llega el correo no vayamos a cambiar a true el confirmed de user sin estar seguros.
 
-  27- Confirmamos el usuario en base al token. Creamos un endpoint nuevo confirm-account en /routes/authRoutes
+  27- Confirmamos el usuario en base al token. Creamos un endpoint nuevo confirm-account en /routes/authRoutes/confirm-account | 
+
+  28- Autenticamos el usuario. Ya lo habiamos confirmado, ahora lo autenticamos.. son como los "sacramentos". Tenemos que revisar si user existe, si esta confirmado y si password es valido. Creamos nuevo endpoint login /routes/authRoutes/login | que necesita ese endpoint? email y password.
+
+  29- Integramos la nueva feature (login) al frontend. El router es quien comanda-> ahi creamos la ruta que va a llamar a una view que esta dentro de un nuevo layout "AuthLayout"

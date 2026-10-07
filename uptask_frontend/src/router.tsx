@@ -4,6 +4,8 @@ import DashboardView from "./Views/DashboardView";
 import CreateProjectView from "./Views/CreateProjectView";
 import EditProjectView from "./Views/EditProjectView";
 import { ProjectDetailsView } from "./Views/ProjectDetailsView";
+import AuthLayout from "./Layouts/AuthLayout";
+import LoginView from "./Views/auth/LoginView";
 
 export default function Router() {
   return (
@@ -11,14 +13,19 @@ export default function Router() {
       <Routes>
         {/* Esta ruta tiene AppLayout | Esta ruta tiene el rol de agrupar a pesar que es Route-singular */}
         <Route element={<AppLayout />}>
-          {/* Cuando visite '/' renderiza DashboardView que es index-hay un solo indice por grupo de rutas- */}
-          <Route path="/" element={<DashboardView />} index />
-          {/* Cuando visite '/projects/create' renderiza CreateProjectView */}
-          <Route path="/projects/create" element={<CreateProjectView/>}/>
-          {/* Ver proyecto */}
-          <Route path="projects/:projectId" element={<ProjectDetailsView/>}/>
-          {/* Editar */}
-          <Route path="/projects/:projectId/edit" element={<EditProjectView/>}/>
+              {/* Cuando visite '/' renderiza DashboardView que es index-hay un solo indice por grupo de rutas- */}
+              <Route path="/" element={<DashboardView />} index />
+              {/* Cuando visite '/projects/create' renderiza CreateProjectView */}
+              <Route path="/projects/create" element={<CreateProjectView />} />
+              {/* Ver proyecto */}
+              <Route path="projects/:projectId" element={<ProjectDetailsView />} />
+              {/* Editar */}
+              <Route path="/projects/:projectId/edit" element={<EditProjectView />} />
+        </Route>
+        {/* Ruta para Login */}
+        <Route element={<AuthLayout />}>
+          {/* Cuando visite /auth/login renderiza LoginView */}
+          <Route path="/auth/login" element={<LoginView />} />
         </Route>
       </Routes>
     </BrowserRouter>
