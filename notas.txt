@@ -311,4 +311,9 @@ packageJson:
 
   28- Autenticamos el usuario. Ya lo habiamos confirmado, ahora lo autenticamos.. son como los "sacramentos". Tenemos que revisar si user existe, si esta confirmado y si password es valido. Creamos nuevo endpoint login /routes/authRoutes/login | que necesita ese endpoint? email y password.
 
-  29- Integramos la nueva feature (login) al frontend. El router es quien comanda-> ahi creamos la ruta que va a llamar a una view que esta dentro de un nuevo layout "AuthLayout"
+  29- Integramos la nueva feature (login) al frontend. El router es quien comanda-> ahi creamos la ruta que va a llamar a una view que esta dentro de un nuevo layout "AuthLayout" 
+
+  ¿POR QUE HAY QUE CREAR SCHEMAS ... ? 
+
+  30- Creamos schema: authSchema /types/index.ts
+  31- Creamos RegisterView -> en el router con esto "creamos un usario" se le llama registro de usario. /auth/login/register

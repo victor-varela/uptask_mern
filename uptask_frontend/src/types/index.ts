@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { email, z } from "zod";
 
 /** Projects */
 //Declaramos el schema que sabemos que vamos a usar para las consultas con axios a la API-- las respuestas--
@@ -50,6 +50,19 @@ export type Task= z.infer<typeof taskSchema>
 //Creamos type de taskFormData porque hay un formulario para crear tarea y definimos lo que vamos a requerir: nombre y descripcion de la tarea
 export type TaskFormData = Pick<Task, "name"| "description">
 
+//Auth & User - Estos son los datos que se manejan en create-account | esos datos VAN hacia la api y esto nos sirve para tiparlos | nos apoyamos en el schema para generar el type Auth y de este type Auth usamos Pick para crear el type UserLoginForm.. que es lo que vamos a usar en LoginView.tsx | authSchema es lo mas general en el mundo de los datos de auth --> con Pick tomamos "pickeamos" lo que queremos.
+const authSchema = z.object ({
+  name: z.string(),
+  email: z.email(),
+  password: z.string(),
+  password_confirmation: z.string()
+})
+
+type Auth = z.infer<typeof authSchema>
+export type UserLoginForm = Pick<Auth, "email"| "password">
+//Creamos type para el registro de usarios => que necesita? name, email, password y confirmation_password
+export type UserRegistrationForm = Pick<Auth, "name" | "email" | "password" | "password_confirmation">
+
 /***
  * Importamos todo {z } de zod
  * OJO en Mongo, el id es type objectID pero cuando tengamos la respuesta en el cliente va a venir como string por eso se declara como string ese campo. Los otros campos, updatedAt, Task, etc.. los fuimos agregando despues pero eso ELEGIMOS el PICK como utility type y no el OMIT para inferrir el type.. con pick no tenemos que cambiar tanto el codigo a medida que agregamos campos al schema. Es decir, como ya SE que en el FORMULARIO para crear proyectos son ESOS campos, entonces yo los ELIJO / PICK.. 
@@ -63,13 +76,14 @@ export type TaskFormData = Pick<Task, "name"| "description">
  * Para Task hacemos lo mismo "Generar el schema", el contrato de datos.- Un schema para valildacion con Zod, un type para Ts-- Entonces:1- definimos que COMO SON LOS DATOS, para ello creamos un schema-> ZOD valida con eso y 2- definimos el type de esos datos para que TS nos ayude con autocompletado, nos marque errores si los hay y no se queje. Esa es mas o menos la dinamica de schemas y types . Para projectSchema y taskSchema se agrega el campo id en el front a pesar de que en el back no lo haya definido porque ese id lo crea mongoose cuando se guarda en la DB y como el front CONSUME de la DB lo necesita para validar.. 
  * 
  * 
-
-
-
-
-
-
-
-
-
+ * En auth & user: son schemas y types que se van armando a medida que Ts marca los errores. En LoginView si no esta tipado formData marca el error entonces ahi me pregunto : ¿qué forma tiene lo que llega a esa función? Tiene email y password, nada más. Y ahí aparece el tipo que armamos arriba, UserLoginForm, que es justo eso. Nos valemos de un schema para armar un type y un type para armar otro con un Pick, siempre tratando de evitar la repeticion y si algo crece se cambia en un solo lugar.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
  */

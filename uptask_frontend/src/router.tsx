@@ -6,6 +6,7 @@ import EditProjectView from "./Views/EditProjectView";
 import { ProjectDetailsView } from "./Views/ProjectDetailsView";
 import AuthLayout from "./Layouts/AuthLayout";
 import LoginView from "./Views/auth/LoginView";
+import RegisterView from "./Views/auth/RegisterView";
 
 export default function Router() {
   return (
@@ -26,6 +27,8 @@ export default function Router() {
         <Route element={<AuthLayout />}>
           {/* Cuando visite /auth/login renderiza LoginView */}
           <Route path="/auth/login" element={<LoginView />} />
+          {/* Cuando visite /register voy a crear un usuario */}
+          <Route path="/auth/register" element={<RegisterView />} />
         </Route>
       </Routes>
     </BrowserRouter>
