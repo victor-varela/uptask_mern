@@ -17,7 +17,7 @@ export class AuthEmail {
         html: `<p>Hola ${user.name}, has creado tu cuenta en Uptask.</p>
 
         <p>Visita el siguiente enlace:</p>
-        <a href="">Confirmar cuenta</a>
+        <a href="${process.env.FRONTEND_URL}/auth/confirm-account">Confirmar cuenta</a>
         <p>Ingresa el codigo: <b>${user.token}</b></p>
         <p>El codigo expira en 10 minutos</p>
         `,
@@ -35,7 +35,7 @@ export class AuthEmail {
 
 /**
  * Yo habia hecho la funcion asi:  static SendConfirmationEmail = async ({ email, name, token }:IUser) => | con cada campo como si fueran props.. pero el profe lo hizo asi static SendConfirmationEmail = async (user:IUser) es mas lindo. pero la razon es que si crece el objeto que estamos manejando solo lo tenemos que agregar al interface y dentro accedemos con punto .projectName por ejemplo. asi que uso la version del profe
- * 
+ * El <a> dirige al frontend_URL /auth/confirm-account que es la vista para ingresar el codigo en el frontend
  * 
  * 
  * 

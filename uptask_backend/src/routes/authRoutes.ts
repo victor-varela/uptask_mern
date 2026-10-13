@@ -7,7 +7,7 @@ const router = Router();
 
 //Crear cuenta
 router.post(
-  "/",
+  "/create-account",
   body("name").notEmpty().withMessage("El nombre es obligatorio"),
   body("email").toLowerCase().isEmail().withMessage("Email no valido"),
   body("password").isLength({ min: 8 }).withMessage("El password debe tener minimo 8 caracteres"),

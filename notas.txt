@@ -317,3 +317,28 @@ packageJson:
 
   30- Creamos schema: authSchema /types/index.ts
   31- Creamos RegisterView -> en el router con esto "creamos un usario" se le llama registro de usario. /auth/login/register
+  
+  ==============
+  Cuando pasa el formulario, entra el handleSubmit y ahi se baila con la mutation.. es casi siempre asi. Un formulario llama una mutacion => una mutacion llama a una api fn ==> onSucces un toast => onError un toast y las derivaciones de UI, reset- naviagate- invalidateQueries, etc
+================
++ En el handleForm la mutation envia los datos, a veces hay que armar un objeto previo ej  
+
+const handleForm = (formData: TaskFormData) => {
+    //Armamos el obj que necesita la api fn--> updateTask| ademas de los Ids tambien la dataForm actualizada
+    const mutationData = {
+      projectId,
+      taskId,
+      formData,
+    };
+    //llamamos a mutate | haz lo tuyo
+    mutate(mutationData);
+}
+a veces es directo handleForm= (formData:SomeType)=> mutate(formData)
+
++ Ese mutate dispara useMutation => mutationFn : api Fn | onError | onSucces | y los respectivos querieClient.invalidateQueries que refrescan la UI
+
+32- Para el manejo de register y login, creamos un nuevo archivo en /api AuthAPI.ts ahi va la peticion a la API que retornamos a la mutacion.
+
+OJO no olvidar para que funcione el toast de agregar el ToastContainer en el nuevo layout de AuthLayout.ts
+
+32- Creamos la vista ConfirmAccount.tsx para cuando el usuario entra a su correo y hace click en el enlace que le enviamos para confirmar, ahi debe ingresar el token que generamos. Volvemos al backend src/emails/AuthEmail.ts y en el <a> que habiamos dejado pendiente agregame el endpoint que va a tocar user para acceder a la vista ConfirmAccount.tsx "/auth/confirm-account" ese endpoint lo sacamos de .env porque es la url del frontend + /auth/confirm-account | para acceder a esa nueva vista en el frontend la agregamos en el router. como siempre, el router es el 5 de la cancha por donde empieza el juego y distribuye. 

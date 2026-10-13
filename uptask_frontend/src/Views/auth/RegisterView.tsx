@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import type { UserRegistrationForm } from "@/types/index";
 import ErrorMessage from "@/components/ErrorMessage";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { createAccount } from "@/api/AuthAPI";
+import { toast } from "react-toastify";
 
 export default function RegisterView() {
   const initialValues: UserRegistrationForm = {
@@ -11,6 +14,8 @@ export default function RegisterView() {
     password_confirmation: "",
   };
 
+  
+
   const {
     register,
     handleSubmit,
@@ -19,11 +24,23 @@ export default function RegisterView() {
     formState: { errors },
   } = useForm<UserRegistrationForm>({ defaultValues: initialValues });
 
+  // creamos password con la fn watch de useForm para comparar en el input si son iguales
   const password = watch("password");
 
-  const handleRegister = (formData: UserRegistrationForm) => {
-    console.log(formData);
-  };
+  //instanciamos useMutation
+  const { mutate } = useMutation({
+    mutationFn: createAccount,
+    onError: error => {
+      toast.error(error.message);
+    },
+    onSuccess: data => {
+      toast.success(data);
+      reset();
+    },
+  });
+
+  const handleRegister = (formData: UserRegistrationForm) => mutate(formData)
+
 
   return (
     <>
@@ -116,3 +133,22 @@ export default function RegisterView() {
     </>
   );
 }
+
+/**
+ * validate: value => value === password || "Los Passwords no son iguales" ===> esto es sintaxis de useForm, la fn validate revisa value y password que habia creado mas arriba con watch y permite validacion rapida en el form. el watch sabe cuales son los campos permitidos que puede leer del form por eso si pongo not_bacon me marca errores.
+ *
+ * Cuando pasa el formulario, entra el handleSubmit y ahi se baila con la mutation.. es casi siempre asi. Un formulario llama una mutacion => una mutacion llama a una api fn ==> onSucces un toast => onError un toast y las derivaciones de UI, reset- naviagate- etc
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */

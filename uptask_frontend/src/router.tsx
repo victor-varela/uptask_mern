@@ -7,6 +7,7 @@ import { ProjectDetailsView } from "./Views/ProjectDetailsView";
 import AuthLayout from "./Layouts/AuthLayout";
 import LoginView from "./Views/auth/LoginView";
 import RegisterView from "./Views/auth/RegisterView";
+import ConfirmAccountView from "./Views/auth/ConfirmAccountView";
 
 export default function Router() {
   return (
@@ -29,6 +30,8 @@ export default function Router() {
           <Route path="/auth/login" element={<LoginView />} />
           {/* Cuando visite /register voy a crear un usuario */}
           <Route path="/auth/register" element={<RegisterView />} />
+          {/* cuando visite confirm-account ingresa el codigo que enviamos por mail el token */}
+          <Route path="/auth/confirm-account" element={<ConfirmAccountView />} />
         </Route>
       </Routes>
     </BrowserRouter>
