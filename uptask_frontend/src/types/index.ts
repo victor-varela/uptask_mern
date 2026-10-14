@@ -53,12 +53,15 @@ const authSchema = z.object({
   email: z.email(),
   password: z.string(),
   password_confirmation: z.string(),
+  token:z.string()
 });
 
 type Auth = z.infer<typeof authSchema>;
 export type UserLoginForm = Pick<Auth, "email" | "password">;
 //Creamos type para el registro de usarios => que necesita? name, email, password y confirmation_password
 export type UserRegistrationForm = Pick<Auth, "name" | "email" | "password" | "password_confirmation">;
+//Creamos type para validacion de token
+export type ConfirmToken = Pick<Auth, "token">
 
 /***
  * Importamos todo {z } de zod
@@ -75,7 +78,7 @@ export type UserRegistrationForm = Pick<Auth, "name" | "email" | "password" | "p
  *
  * En auth & user: son schemas y types que se van armando a medida que Ts marca los errores. En LoginView si no esta tipado formData marca el error entonces ahi me pregunto : ¿qué forma tiene lo que llega a esa función? Tiene email y password, nada más. Y ahí aparece el tipo que armamos arriba, UserLoginForm, que es justo eso. Nos valemos de un schema para armar un type y un type para armar otro con un Pick, siempre tratando de evitar la repeticion y si algo crece se cambia en un solo lugar.
  *
- *
+ * Cuando vimos que hacia falta un campo nuevo en el schema de authSchema --> el token-- lo agregamos, le asignamos string y CREAMOS un nuevo type a partir de ese schema, siempre hay un schema general y luego types que pickean de ahí.. lo picotean... para tener custom types a medida que lo requerimos | en este caso el type Token
  *
  *
  *

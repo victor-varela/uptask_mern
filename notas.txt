@@ -342,3 +342,5 @@ a veces es directo handleForm= (formData:SomeType)=> mutate(formData)
 OJO no olvidar para que funcione el toast de agregar el ToastContainer en el nuevo layout de AuthLayout.ts
 
 32- Creamos la vista ConfirmAccount.tsx para cuando el usuario entra a su correo y hace click en el enlace que le enviamos para confirmar, ahi debe ingresar el token que generamos. Volvemos al backend src/emails/AuthEmail.ts y en el <a> que habiamos dejado pendiente agregame el endpoint que va a tocar user para acceder a la vista ConfirmAccount.tsx "/auth/confirm-account" ese endpoint lo sacamos de .env porque es la url del frontend + /auth/confirm-account | para acceder a esa nueva vista en el frontend la agregamos en el router. como siempre, el router es el 5 de la cancha por donde empieza el juego y distribuye. 
+
+33- En ConfirmAccountView.tsx importamos chakraUI para el componente cool que hace de input para los digitos del token-==> npm i @chakra-ui/pin-input. Luego que tenemos el pin llamamos useMutation| tenemos que escribir entonces la mutationFn, en /src/api/AuthAPI.ts
