@@ -38,6 +38,7 @@ router.post("/login",
 
 //Reenviar codigo
 router.post("/request-code",
+  body("email").toLowerCase().isEmail().withMessage("Email no valido"),
   AuthController.requestConfirmationCode
 )
 export default router;
