@@ -25,3 +25,18 @@ export async function confirmAccount(formData: ConfirmToken) {
     }
   }
 }
+
+//Login
+export async function login(formData: UserLoginForm) {
+  try {
+    const { data } = await api.post<string>("auth/login", formData);
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+
+//Obtener nuevo codigo
+

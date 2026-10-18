@@ -35,6 +35,11 @@ router.post("/login",
     handlerInputErrors,
     AuthController.Login
 )
+
+//Reenviar codigo
+router.post("/resend-code",
+  AuthController.requestConfirmationCode
+)
 export default router;
 
 /**

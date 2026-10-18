@@ -30,6 +30,29 @@ export class AuthEmail {
       },
     );
   };
+  static sendRequestConfirmationEmail = async (user:IUser) => {
+   await  transporter.sendMail(
+      {
+        from: "UpTask <admin@uptask.com>",
+        to: user.email,
+        subject: "UpTask - Confirma tu cuenta",
+        text: "UpTask- Confirma tu cuenta",
+        html: `<p>Hola ${user.name}, volvemos a enviar tu codigo.</p>
+
+        <p>Visita el siguiente enlace:</p>
+        <a href="${process.env.FRONTEND_URL}/auth/confirm-account">Confirmar cuenta</a>
+        <p>Ingresa el codigo: <b>${user.token}</b></p>
+        <p>El codigo expira en 10 minutos</p>
+        `,
+      },
+      (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log("MAILTRAP Message sent: %s", info.messageId);
+      },
+    );
+  };
 }
 
 

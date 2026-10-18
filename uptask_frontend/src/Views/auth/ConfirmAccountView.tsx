@@ -66,6 +66,6 @@ export default function ConfirmAccountView() {
                     token: string;
                     }
  * 
- * En realidad todos los types son objetos.. esto es importante a la hora de el envio de los datos entre funciones, en la mutacion se envia como {token} para que acceda a esa propiedad
+ * En realidad todos los types son objetos.. esto es importante a la hora de el envio de los datos entre funciones, en la mutacion se envia como {token} para que acceda a esa propiedad. En las otras mutaciones, el argumento que le enviabamos venia de formData que eso lo maneja react-hook-form y devuelve un objeto directamente por eso no le enviaba con llaves {} en la mutacion. En este caso el objeto lo armo yo mismo a mano, por eso las llaves {}
  * 
  */
