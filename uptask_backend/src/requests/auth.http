@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ### RequestConfirmationCode- reenviar codigo de autenticacion | token
-POST http://localhost:4000/api/auth/resend-code
+POST http://localhost:4000/api/auth/request-code
 Content-Type: application/json
 
 {

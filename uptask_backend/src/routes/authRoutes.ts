@@ -37,7 +37,7 @@ router.post("/login",
 )
 
 //Reenviar codigo
-router.post("/resend-code",
+router.post("/request-code",
   AuthController.requestConfirmationCode
 )
 export default router;
