@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import type { ConfirmToken, UserLoginForm } from "@/types";
+import type { ConfirmToken, ForgotPasswordForm, RequestConfirmationCodeForm, UserLoginForm } from "@/types";
 import { isAxiosError } from "axios";
 
 //Crear una cuenta
@@ -39,4 +39,25 @@ export async function login(formData: UserLoginForm) {
 }
 
 //Obtener nuevo codigo
+export async function requestNewCode(formData: RequestConfirmationCodeForm) {
+  try {
+    const { data } = await api.post<string>("auth/request-code", formData);
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
 
+//Reestablecer password
+export async function requestNewPassword(formData: ForgotPasswordForm) {
+  try {
+    const { data } = await api.post<string>("auth/forgot-password", formData);
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}

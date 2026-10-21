@@ -14,8 +14,6 @@ export default function RegisterView() {
     password_confirmation: "",
   };
 
-  
-
   const {
     register,
     handleSubmit,
@@ -39,8 +37,7 @@ export default function RegisterView() {
     },
   });
 
-  const handleRegister = (formData: UserRegistrationForm) => mutate(formData)
-
+  const handleRegister = (formData: UserRegistrationForm) => mutate(formData);
 
   return (
     <>
@@ -128,6 +125,9 @@ export default function RegisterView() {
       <nav className="mt-10 flex flex-col space-y-4">
         <Link to={"/auth/login"} className="text-center text-gray-300 font-normal">
           ¿Ya tienes cuenta? Inicia Sesion
+        </Link>
+        <Link to={"/auth/forgot-password"} className="text-center text-gray-300 font-normal">
+          ¿Olvidaste tu password? Reestablecer
         </Link>
       </nav>
     </>

@@ -39,7 +39,15 @@ router.post("/login",
 //Reenviar codigo
 router.post("/request-code",
   body("email").toLowerCase().isEmail().withMessage("Email no valido"),
+  handlerInputErrors,
   AuthController.requestConfirmationCode
+)
+
+//Reestablecer password
+router.post("/forgot-password",
+  body("email").toLowerCase().isEmail().withMessage("Email no valido"),
+  handlerInputErrors,
+  AuthController.requestResetPassword
 )
 export default router;
 

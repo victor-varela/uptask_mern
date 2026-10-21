@@ -350,3 +350,9 @@ OJO no olvidar para que funcione el toast de agregar el ToastContainer en el nue
 OJO: EN LOGINVIEW, CUANDO SE ENVIA EL FORMULARIO SI SE VUELVE A TOCAR EL BOTON DE ENVIAR TIENE UN COMPORTAMIENTO ERRONEO. ES COMO SI ENTRA EN EL ERROR DE LA MUTACION Y NO ENTREGA UN MENSAJE. CREO QUE ES POR LAS QUERY, INVALIDAR QUERIES.. PREGUNTAR OJO |-- hipotesis de solucion: usar watch parece que fuerza un render y activa de nuevo a hook-form. 
 
 Volvemos al backend: creamos la ruta en el backend y su controller. 
+
+35- Desarrollamos feature forgot-password con JWT | hasta ahora cuando user confirma su cuenta o recibe un nuevo codigo las vistas login, register, requestNewCode no 'reaccionan' al onSucces.. no redireccionamos a DashboardView -- creo que eso mas adelante lo vamos a corregir..
+
+Comprobar si user exist - send token - verify token - reset password
+
+OJO: Nota que todos o casi todos los formularios deben tener un type definido de su formData ('los datos que envia el formulario') | Los formularios, envian datos => el type de esos datos los definimos a partir de su schema primero y luego los pickeamos | el flujo es : un schema, inferimos el type completo de ese schema con z.infer si queremos todos los campos o pickeamos y luego exportamos cada type especifico que se usa en los formularios especificos y TAMBIEN SE USAN ESOS TYPES EN LAS APIs FUNCTIONS

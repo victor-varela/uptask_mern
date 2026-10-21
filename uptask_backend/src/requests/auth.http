@@ -38,4 +38,13 @@ Content-Type: application/json
   
 }
 
+### ResetPassword - reestablecer password
+POST http://localhost:4000/api/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email":"correo@correo.com"
+  
+}
+
 # Para separar una peticon de otra cada una debe tener ### 3 sino no aparece el send Request porque no sabe que son distintos bloques.

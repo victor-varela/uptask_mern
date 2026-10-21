@@ -8,7 +8,9 @@ import AuthLayout from "./Layouts/AuthLayout";
 import LoginView from "./Views/auth/LoginView";
 import RegisterView from "./Views/auth/RegisterView";
 import ConfirmAccountView from "./Views/auth/ConfirmAccountView";
-import NewCodeView from "./Views/auth/NewCodeView";
+import RequestNewCodeView from "./Views/auth/RequestNewCodeView";
+import ForgotPasswordView from "./Views/auth/ForgotPasswordView";
+import NewPasswordView from "./Views/auth/NewPasswordView";
 
 export default function Router() {
   return (
@@ -34,7 +36,11 @@ export default function Router() {
           {/* cuando visite confirm-account ingresa el codigo que enviamos por mail el token */}
           <Route path="/auth/confirm-account" element={<ConfirmAccountView />} />
           {/* obtener nuevo codigo- token- reenviar codigo */}
-          <Route path="/auth/new-code" element={<NewCodeView />} />
+          <Route path="/auth/request-code" element={<RequestNewCodeView />} />
+          {/* solicitar  reestablecer password */}
+          <Route path="/auth/forgot-password" element={<ForgotPasswordView />} />
+          {/* obtener nuevo password | accede desde el mail de confirmacion*/}
+          <Route path="/auth/new-password" element={<NewPasswordView />} />
         </Route>
       </Routes>
     </BrowserRouter>

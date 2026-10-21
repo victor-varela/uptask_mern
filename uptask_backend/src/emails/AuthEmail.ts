@@ -3,24 +3,24 @@ import { transporter } from "../config/nodemailer";
 interface IUser {
   email: string;
   token: string;
-  name: string
+  name: string;
 }
 
 export class AuthEmail {
-  static sendConfirmationEmail = async (user:IUser) => {
-   await  transporter.sendMail(
+  static sendConfirmationEmail = async (user: IUser, { isResend = false }: { isResend?: boolean } = {}) => {
+    const intro = isResend;
+    await transporter.sendMail(
       {
         from: "UpTask <admin@uptask.com>",
         to: user.email,
         subject: "UpTask - Confirma tu cuenta",
         text: "UpTask- Confirma tu cuenta",
-        html: `<p>Hola ${user.name}, has creado tu cuenta en Uptask.</p>
+        html: `<p>Hola ${user.name}, ${intro ? "volvimos a enviar tu codigo" : "has creado tu cuenta"}.</p>
 
         <p>Visita el siguiente enlace:</p>
         <a href="${process.env.FRONTEND_URL}/auth/confirm-account">Confirmar cuenta</a>
         <p>Ingresa el codigo: <b>${user.token}</b></p>
-        <p>El codigo expira en 10 minutos</p>
-        `,
+        <p>El codigo expira en 10 minutos</p>`,
       },
       (error, info) => {
         if (error) {
@@ -30,20 +30,21 @@ export class AuthEmail {
       },
     );
   };
-  static sendRequestConfirmationEmail = async (user:IUser) => {
-   await  transporter.sendMail(
+
+  //mail para reset password
+  static sendResetPasswordEmail = async (user: IUser) => {
+    await transporter.sendMail(
       {
         from: "UpTask <admin@uptask.com>",
         to: user.email,
-        subject: "UpTask - Confirma tu cuenta",
-        text: "UpTask- Confirma tu cuenta",
-        html: `<p>Hola ${user.name}, volvemos a enviar tu codigo.</p>
+        subject: "UpTask - Reestablece tu password",
+        text: "UpTask- Reestablece tu password",
+        html: `<p>Hola ${user.name}, has solicitado reestablecer tu password.</p>
 
         <p>Visita el siguiente enlace:</p>
-        <a href="${process.env.FRONTEND_URL}/auth/confirm-account">Confirmar cuenta</a>
+        <a href="${process.env.FRONTEND_URL}/auth/new-password">Reestablecer password</a>
         <p>Ingresa el codigo: <b>${user.token}</b></p>
-        <p>El codigo expira en 10 minutos</p>
-        `,
+        <p>El codigo expira en 10 minutos</p>`,
       },
       (error, info) => {
         if (error) {
@@ -54,15 +55,14 @@ export class AuthEmail {
     );
   };
 }
-
 
 /**
  * Yo habia hecho la funcion asi:  static SendConfirmationEmail = async ({ email, name, token }:IUser) => | con cada campo como si fueran props.. pero el profe lo hizo asi static SendConfirmationEmail = async (user:IUser) es mas lindo. pero la razon es que si crece el objeto que estamos manejando solo lo tenemos que agregar al interface y dentro accedemos con punto .projectName por ejemplo. asi que uso la version del profe
  * El <a> dirige al frontend_URL /auth/confirm-account que es la vista para ingresar el codigo en el frontend
- * 
- * 
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
+ *
+ *
  */
