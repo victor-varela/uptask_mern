@@ -24,6 +24,7 @@ export default function ForgotPasswordView() {
     },
     onSuccess: data => {
       toast.success(data);
+      reset()
     },
   });
 

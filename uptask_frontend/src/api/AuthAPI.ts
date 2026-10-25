@@ -52,6 +52,7 @@ export async function requestNewCode(formData: RequestConfirmationCodeForm) {
 
 //Reestablecer password
 export async function requestNewPassword(formData: ForgotPasswordForm) {
+  
   try {
     const { data } = await api.post<string>("auth/forgot-password", formData);
     return data;

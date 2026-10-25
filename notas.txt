@@ -347,7 +347,11 @@ OJO no olvidar para que funcione el toast de agregar el ToastContainer en el nue
 
 34- Desarrollamos la feature de rennvio de codigo |
 
-OJO: EN LOGINVIEW, CUANDO SE ENVIA EL FORMULARIO SI SE VUELVE A TOCAR EL BOTON DE ENVIAR TIENE UN COMPORTAMIENTO ERRONEO. ES COMO SI ENTRA EN EL ERROR DE LA MUTACION Y NO ENTREGA UN MENSAJE. CREO QUE ES POR LAS QUERY, INVALIDAR QUERIES.. PREGUNTAR OJO |-- hipotesis de solucion: usar watch parece que fuerza un render y activa de nuevo a hook-form. 
+OJO LOGINVIEW (y ForgotPassword): después de un envío exitoso con reset(), si se vuelve a tocar enviar, hook-form deja pasar el form vacío al backend.
+CAUSA: no confirmada. Hipótesis: reset necesita un render para volver a registrar los campos y watch() lo provoca. (Descartado: invalidateQueries, StrictMode, versión de la librería.)
+SOLUCIÓN: llamar watch() sin asignarlo. Con navigate al dashboard el form se desmonta y no hace falta.
+
+TOAST VACÍO (problema aparte): handlerInputErrors devolvía {errors: [...]} y el frontend lee 'error'. Ahora devuelve {error: errors.array()[0].msg}. Limitación: solo muestra el primer error.
 
 Volvemos al backend: creamos la ruta en el backend y su controller. 
 
@@ -356,3 +360,5 @@ Volvemos al backend: creamos la ruta en el backend y su controller.
 Comprobar si user exist - send token - verify token - reset password
 
 OJO: Nota que todos o casi todos los formularios deben tener un type definido de su formData ('los datos que envia el formulario') | Los formularios, envian datos => el type de esos datos los definimos a partir de su schema primero y luego los pickeamos | el flujo es : un schema, inferimos el type completo de ese schema con z.infer si queremos todos los campos o pickeamos y luego exportamos cada type especifico que se usa en los formularios especificos y TAMBIEN SE USAN ESOS TYPES EN LAS APIs FUNCTIONS
+
+36- La logica de reestablecer password y sus vistas la anclamos a si es valido el token que ingresa user en NewPasswordView y en esa vista renderizamos condicional | por eso creamos /aut/components/NewPasswordToken y NewPasswordForm

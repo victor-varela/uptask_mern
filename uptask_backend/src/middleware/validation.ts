@@ -9,7 +9,7 @@ export const handlerInputErrors = (req: Request, res: Response, next: NextFuncti
 
   // Si hay errores, corta el flujo y devuelve 400 con los errores
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ error: errors.array()[0].msg });
   }
 
   // Si no hay errores, pasa al siguiente middleware o controller
@@ -35,7 +35,7 @@ export const handlerInputErrors = (req: Request, res: Response, next: NextFuncti
 
 body() no detiene nada por sí solo — solo anota los errores en el req. Luego validationResult(req) los lee de ahí. Por eso necesitás los dos — uno escribe, el otro lee.
  *
- *
+ * Modifique la respuesta a {error: errors.array()[0].msg} para tener un mensaje en el frontend cuando se salta la validacion de hook-form | esto envia solo el mensaje del primer error que encuentra.. no es perfecto pero es algo.
  *
  *
  *
