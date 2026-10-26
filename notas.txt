@@ -362,3 +362,5 @@ Comprobar si user exist - send token - verify token - reset password
 OJO: Nota que todos o casi todos los formularios deben tener un type definido de su formData ('los datos que envia el formulario') | Los formularios, envian datos => el type de esos datos los definimos a partir de su schema primero y luego los pickeamos | el flujo es : un schema, inferimos el type completo de ese schema con z.infer si queremos todos los campos o pickeamos y luego exportamos cada type especifico que se usa en los formularios especificos y TAMBIEN SE USAN ESOS TYPES EN LAS APIs FUNCTIONS
 
 36- La logica de reestablecer password y sus vistas la anclamos a si es valido el token que ingresa user en NewPasswordView y en esa vista renderizamos condicional | por eso creamos /aut/components/NewPasswordToken y NewPasswordForm
+
+37- Volvemos al backend y definimos las rutas (authRoutes) que valida el token que ingresa user para reestablecer password y la ruta que recibe el nuevo password. La que recibie el nuevo password debe hacer lo mismo que cuando se crea un user nuevo, hashear, etc..

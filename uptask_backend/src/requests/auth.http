@@ -47,4 +47,13 @@ Content-Type: application/json
   
 }
 
+### ValidateToken - validar token para reestablecer password
+POST http://localhost:4000/api/auth/validate-token
+Content-Type: application/json
+
+{
+"token":"789560"
+  
+}
+
 # Para separar una peticon de otra cada una debe tener ### 3 sino no aparece el send Request porque no sabe que son distintos bloques.

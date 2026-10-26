@@ -5,7 +5,7 @@ import { checkPassword, passwordHash } from "../utils/auth";
 import Token from "../models/Token";
 import { generateToken } from "../utils/token";
 import { AuthEmail } from "../emails/AuthEmail";
-
+import { body } from "express-validator";
 
 export class AuthController {
   static createAccount = async (req: Request, res: Response) => {
@@ -123,7 +123,6 @@ export class AuthController {
 
   //este metodo es muy similar a crear cuenta porque involucra el envio de emal, verificacion de user.. etc | vericamos su email, es lo que necesita para avanzar. ya esta registrado asi que ya tiene un password.
   static requestConfirmationCode = async (req: Request, res: Response) => {
-    
     try {
       const { email } = req.body; //extraer solo lo que permitimos | no puede recibir role:"admin" o confirmed, etc.. esos son campos que decide el servidor si un atacante envia confirmed true y lo extraigo le estoy dando toda la cancha para que entre
 
@@ -136,10 +135,10 @@ export class AuthController {
       }
 
       //Para evitar enviar codigos a user que estan confirmados
-      if(user.confirmed){
-        const error = new Error("El usuario ya esta confirmado")
-        return res.status(409).json({error: error.message})
-      } 
+      if (user.confirmed) {
+        const error = new Error("El usuario ya esta confirmado");
+        return res.status(409).json({ error: error.message });
+      }
 
       //Ya verificamos que esta registrado - Creamos token- instanciamos el modelo ¿que necesita? un token y un user- id de user(asi esta en el modelo)
       const token = new Token();
@@ -151,9 +150,12 @@ export class AuthController {
       token.user = user._id;
 
       //enviamos el email - Usamos la el metodo de la class AuthEmail
-      await AuthEmail.sendConfirmationEmail({ email: user.email, token: token.token, name: user.name }, {isResend:true});
+      await AuthEmail.sendConfirmationEmail(
+        { email: user.email, token: token.token, name: user.name },
+        { isResend: true },
+      );
 
-      //Guardo nuevo token | 
+      //Guardo nuevo token |
       await token.save();
       res.send("Enviamos un nuevo codigo a tu email");
     } catch (error) {
@@ -163,7 +165,6 @@ export class AuthController {
 
   //este metodo es muy similar al de reenviar codigo para confirmacion pero no necesita verificar si user esta confirmado
   static requestResetPassword = async (req: Request, res: Response) => {
-    
     try {
       const { email } = req.body; //extraer solo lo que permitimos | no puede recibir role:"admin" o confirmed, etc.. esos son campos que decide el servidor si un atacante envia confirmed true y lo extraigo le estoy dando toda la cancha para que entre
 
@@ -174,7 +175,7 @@ export class AuthController {
         const error = new Error("Usuario no encontrado");
         return res.status(404).json({ error: error.message });
       }
-       
+
       //Ya verificamos que esta registrado - Creamos token- instanciamos el modelo ¿que necesita? un token y un user- id de user(asi esta en el modelo)
       const token = new Token();
 
@@ -187,12 +188,26 @@ export class AuthController {
       //enviamos el email - Usamos el metodo de la class AuthEmail para ello es un metodo diferente a confirmation
       await AuthEmail.sendResetPasswordEmail({ email: user.email, token: token.token, name: user.name });
 
-      //Guardo nuevo token | 
+      //Guardo nuevo token |
       await token.save();
       res.send("Enviamos un nuevo codigo a tu email");
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
+  };
+
+  //Validar token para reestablecer password
+  static validateToken = async (req: Request, res: Response) => {
+    const { token } = req.body;
+
+    const tokenExist = await Token.findOne({ token });
+
+    if (!tokenExist) {
+      const error = new Error("El token no es valido");
+      return res.status(404).json({ error: error.message });
+    }
+
+    res.send("Codigo valido. Define tu nuevo password");
   };
 }
 

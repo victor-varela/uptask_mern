@@ -4,7 +4,7 @@ import NewPasswordForm from "./components/NewPasswordForm";
 
 export default function NewPasswordView() {
   // renderizamos dependiendo si el token es valido o no
-  const [isValidToken, setIsValidToken] = useState(true);
+  const [isValidToken, setIsValidToken] = useState(false);
 
   const intro = isValidToken? "Completa el formulario" : "Ingresa el codigo que recibiste"
   const highlight = isValidToken ? "para cambiar tu password" : "por email"

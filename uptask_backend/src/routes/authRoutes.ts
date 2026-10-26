@@ -49,6 +49,13 @@ router.post("/forgot-password",
   handlerInputErrors,
   AuthController.requestResetPassword
 )
+
+//Validar Token para reestablecer password
+router.post("/validate-token",
+  body("token").notEmpty().withMessage("El token es obligatorio"),
+  handlerInputErrors,
+  AuthController.validateToken
+)
 export default router;
 
 /**
