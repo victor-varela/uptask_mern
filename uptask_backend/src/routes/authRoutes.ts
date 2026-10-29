@@ -1,7 +1,8 @@
 import { request, response, Router } from "express";
 import { AuthController } from "../controllers/AuthController";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { handlerInputErrors } from "../middleware/validation";
+import { bgYellow } from "colors";
 
 const router = Router();
 
@@ -43,7 +44,7 @@ router.post("/request-code",
   AuthController.requestConfirmationCode
 )
 
-//Reestablecer password
+//Solicitar Reestablecer password
 router.post("/forgot-password",
   body("email").toLowerCase().isEmail().withMessage("Email no valido"),
   handlerInputErrors,
@@ -55,6 +56,20 @@ router.post("/validate-token",
   body("token").notEmpty().withMessage("El token es obligatorio"),
   handlerInputErrors,
   AuthController.validateToken
+)
+
+//Actualizar password | recibimos de url el token para usarlo en controller ---> asociarlo a user
+router.post("/update-password/:token",
+  param("token").isNumeric().withMessage("El token no es valido"),
+  body("password").isLength({ min: 8 }).withMessage("El password debe tener minimo 8 caracteres"),
+  body("password_confirmation").custom((value, {req})=>{
+    if(value !== req.body.password){
+        throw new Error("El password no coincide")
+    }
+    return true
+  }),
+  handlerInputErrors,
+  AuthController.updatePasswordWithToken
 )
 export default router;
 

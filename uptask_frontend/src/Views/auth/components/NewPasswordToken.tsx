@@ -1,16 +1,42 @@
+import { validateToken } from "@/api/AuthAPI";
+import type { ConfirmToken } from "@/types";
 import { PinInput, PinInputField } from "@chakra-ui/pin-input";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
-export default function NewPasswordToken() {
-  const handleChange = (token: string) => {};
-  const handleComplete = (token: string) => {};
+type NewPasswordTokenProps = {
+  token: ConfirmToken["token"];
+  setToken: React.Dispatch<React.SetStateAction<string>>;
+  setIsValidToken: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+//los types de las state fn los saco hovereando con VsCode
+
+export default function NewPasswordToken({ token, setToken, setIsValidToken }: NewPasswordTokenProps) {
+  const handleChange = (token: string) => setToken(token);
+  
+
+  const {mutate} = useMutation({
+    mutationFn: validateToken,
+    onError: error => {
+      toast.error(error.message);
+    },
+    onSuccess: data => {
+      toast.success(data);
+      //Cambio isValidToken para renderizar NewPasswordForm
+      setIsValidToken(true)
+    },
+  });
+
+  const handleComplete = (token: string) => mutate({token}); //Como ConfirmToken en la apiFn es { token: string }, hay que pasarle un objeto.
 
   return (
     <>
       <form className="space-y-8 p-10 rounded-lg bg-white mt-10">
         <label className="font-normal text-2xl text-center block">Código de 6 dígitos</label>
         <div className="flex justify-center gap-5">
-          <PinInput value={"123456"} onChange={handleChange} onComplete={handleComplete}>
+          <PinInput value={token} onChange={handleChange} onComplete={handleComplete}>
             <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
             <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
             <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
@@ -28,3 +54,15 @@ export default function NewPasswordToken() {
     </>
   );
 }
+
+/**
+ * Aca validamos el token y usamos el state que recibimos del componente padre NewPasswordView para que afecte a toda la vista. Aca hacemos la mutacion.
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */

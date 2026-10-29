@@ -66,7 +66,7 @@ export class AuthController {
       user.confirmed = true;
 
       //eliminamos el token todo ese objeto que esta instanciado en tokenExist y guardamos user con el nuevo campo actualizado todo en una sola con Promise.allSetled
-      Promise.allSettled([user.save(), tokenExist.deleteOne()]);
+     await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
 
       //retornamos algo para que se entere el frontend jeje
       return res.send(`${user.name} cuenta confirmada correctamente`);
@@ -198,16 +198,55 @@ export class AuthController {
 
   //Validar token para reestablecer password
   static validateToken = async (req: Request, res: Response) => {
-    const { token } = req.body;
+    try {
+      const { token } = req.body;
 
-    const tokenExist = await Token.findOne({ token });
+      const tokenExist = await Token.findOne({ token });
 
-    if (!tokenExist) {
-      const error = new Error("El token no es valido");
-      return res.status(404).json({ error: error.message });
+      if (!tokenExist) {
+        const error = new Error("El token no es valido");
+        return res.status(404).json({ error: error.message });
+      }
+
+      res.send("Codigo valido. Define tu nuevo password");
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
     }
+  };
 
-    res.send("Codigo valido. Define tu nuevo password");
+  static updatePasswordWithToken = async (req: Request, res: Response) => {
+    //A pesar de que viajan password y password_confirmation usamos solo password para las operaciones en la DB
+
+    //leemos el token que viene en la URL -- lo vamos a necesitar mas adelante como una mouskHerramienta | el token tiene un user asociado.
+
+    try {
+      const { token } = req.params;
+
+      const tokenExist = await Token.findOne({ token });
+
+      if (!tokenExist) {
+        const error = new Error("El token no es valido");
+        return res.status(404).json({ error: error.message });
+      }
+
+      //Paso validacion. Token valido | leemos la nueva password y escribimos en la DB
+
+      //Instacio User para saber a que usario asignar la nueva password
+      const user = await User.findById(tokenExist.user);
+
+      //Leo password
+      const { password } = req.body;
+
+      //Asignamos a user el valor del hash de password nuevo. es await porque demora, es encriptacion
+      user.password = await passwordHash(password);
+
+      //Escribimos en DB | guardar User y eliminar Token
+     await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
+
+      res.send("Password creado correctamente");
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+    }
   };
 }
 
@@ -230,4 +269,7 @@ export class AuthController {
  * 
  * El chequeo del password lo habia hecho directamente en este arhivo, el profe lo hace desde /utils/auth.ts --> 
  * 
+ * OJO: sintaxis-- findById no recibe un Object | findOne SI recibe un Object
+ * OJO: siempre try catch en los controllers! | SI VOY A LA DB SIEMPRE AWAIT SIEMPRE AWAIT | SI USO UN MODELO ---AWAIT-- 
+ *
  */

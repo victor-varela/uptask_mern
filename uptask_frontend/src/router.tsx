@@ -27,7 +27,7 @@ export default function Router() {
               {/* Editar */}
               <Route path="/projects/:projectId/edit" element={<EditProjectView />} />
         </Route>
-        {/* Ruta para Login */}
+        {/* Ruta para Login / Auth */}
         <Route element={<AuthLayout />}>
           {/* Cuando visite /auth/login renderiza LoginView */}
           <Route path="/auth/login" element={<LoginView />} />

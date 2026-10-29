@@ -52,8 +52,16 @@ POST http://localhost:4000/api/auth/validate-token
 Content-Type: application/json
 
 {
-"token":"789560"
-  
+"token":"910039"
+}
+
+### UpdatePassword - recibe token via paramas y password/password_confirmation en el body y actualiza en DB
+POST http://localhost:4000/api/auth/update-password/910039
+Content-Type: application/json
+
+{
+"password":"password3",
+"password_confirmation":"password3"  
 }
 
 # Para separar una peticon de otra cada una debe tener ### 3 sino no aparece el send Request porque no sabe que son distintos bloques.
