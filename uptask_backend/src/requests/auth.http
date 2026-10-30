@@ -56,7 +56,7 @@ Content-Type: application/json
 }
 
 ### UpdatePassword - recibe token via paramas y password/password_confirmation en el body y actualiza en DB
-POST http://localhost:4000/api/auth/update-password/910039
+POST http://localhost:4000/api/auth/update-password/210533
 Content-Type: application/json
 
 {

@@ -24,12 +24,12 @@ export default function NewPasswordToken({ token, setToken, setIsValidToken }: N
     },
     onSuccess: data => {
       toast.success(data);
-      //Cambio isValidToken para renderizar NewPasswordForm
+      //Cambio isValidToken para renderizar NewPasswordForm | 
       setIsValidToken(true)
     },
   });
 
-  const handleComplete = (token: string) => mutate({token}); //Como ConfirmToken en la apiFn es { token: string }, hay que pasarle un objeto.
+  const handleComplete = (token: string) => mutate({token}); //Como el type en la apiFn es ConfirmToken === { token: string }, hay que pasarle un objeto.
 
   return (
     <>

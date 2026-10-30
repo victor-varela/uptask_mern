@@ -1,5 +1,11 @@
 import api from "@/lib/axios";
-import type { ConfirmToken, ForgotPasswordForm, RequestConfirmationCodeForm, UserLoginForm } from "@/types";
+import type {
+  ConfirmToken,
+  ForgotPasswordForm,
+  NewPasswordForm,
+  RequestConfirmationCodeForm,
+  UserLoginForm,
+} from "@/types";
 import { isAxiosError } from "axios";
 
 //Crear una cuenta
@@ -62,12 +68,23 @@ export async function requestNewPassword(formData: ForgotPasswordForm) {
   }
 }
 
-//Validar token para cambiar password 
+//Validar token para cambiar password
 
 //espero recibir token que es de tipo objeto que tiene una propiedad token de tipo string = ConfirmToken hoverea para que veas
 export async function validateToken(token: ConfirmToken) {
   try {
     const { data } = await api.post<string>("auth/validate-token", token);
+    return data;
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.error);
+    }
+  }
+}
+
+export async function updatePassword(formData: NewPasswordForm) {
+  try {
+    const { data } = await api.post<string>(`auth/update-password/${formData.token}`, formData);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {

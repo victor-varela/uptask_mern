@@ -67,7 +67,7 @@ export type RequestConfirmationCodeForm = Pick<Auth, "email">
 //Creamos type para formulario forgot-password
 export type ForgotPasswordForm = Pick<Auth, "email">
 //Creamos type para formulario de newPassword
-export type NewPasswordForm = Pick<Auth, "password" |"password_confirmation">
+export type NewPasswordForm = Pick<Auth, "password" |"password_confirmation" | "token">
 
 /***
  * Importamos todo {z } de zod

@@ -231,7 +231,7 @@ export class AuthController {
 
       //Paso validacion. Token valido | leemos la nueva password y escribimos en la DB
 
-      //Instacio User para saber a que usario asignar la nueva password
+      //Instacio User para saber a que usario asignar la nueva password | esta es la mouskherramienta
       const user = await User.findById(tokenExist.user);
 
       //Leo password
