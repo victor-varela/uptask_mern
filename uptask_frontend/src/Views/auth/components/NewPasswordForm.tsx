@@ -32,6 +32,7 @@ export default function NewPasswordForm({ token }: NewPasswordFormProps) {
     onSuccess: data => {
       toast.success(data);
       reset()
+      navigate("/auth/login")
     },
   });
 
@@ -86,3 +87,13 @@ export default function NewPasswordForm({ token }: NewPasswordFormProps) {
     </>
   );
 }
+
+/**
+ * Yo hice el paso de token de forma distinta al profesor. Yo agrege token al type en types/index NewPasswordForm y lo pase por props y lo capture en initialValues| el profe arma un objeto para pasarle a mutate ==> const handleNewPassword = (formData: NewPasswordForm) => {
+  mutate({ formData, token }) le manda formData de hook-form y token que viene por props.. 
+}
+ * 
+ * 
+ * 
+ * 
+ */

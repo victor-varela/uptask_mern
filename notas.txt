@@ -365,4 +365,6 @@ OJO: Nota que todos o casi todos los formularios deben tener un type definido de
 
 37- Volvemos al backend y definimos las rutas (authRoutes) que valida el token que ingresa user para reestablecer password y la ruta que recibe el nuevo password. La que recibie el nuevo password debe hacer lo mismo que cuando se crea un user nuevo, hashear, escribir de nuevo en User el password recien creado
 
-38- Desarrollamos la feature de cambiar password en el frontend ya con la API hecha para ello. 
+38- Desarrollamos la feature de cambiar password en el frontend ya con la API hecha para ello. Usamos useMutation
+
+39- Implementamos JWT para el login. JWT es lo mas popular para Autenticar y Autorizar. Esto lo hacemos en Login, una vez que paso la validacion en el BACKEND. AuthController.Login | Creamos la fn generateJWT en /utils | instalamos la dependencias jsonwebtoken y -D @types/jsonwebtoken | en la documentacion esta lo que usa jwt -> payload (la data que enviamos) | privateKey (la contraseña que creamos nosotros supersecreta) | options(hay vairas opciones la principal es cuando expiera el jwt- expires - ) jwt tiene 3 metodos : sign, verify, decode.s | Creamos una .env para la secret de JWT.

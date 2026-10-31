@@ -6,6 +6,7 @@ import Token from "../models/Token";
 import { generateToken } from "../utils/token";
 import { AuthEmail } from "../emails/AuthEmail";
 import { body } from "express-validator";
+import generateJwt from "../utils/jwt";
 
 export class AuthController {
   static createAccount = async (req: Request, res: Response) => {
@@ -66,7 +67,7 @@ export class AuthController {
       user.confirmed = true;
 
       //eliminamos el token todo ese objeto que esta instanciado en tokenExist y guardamos user con el nuevo campo actualizado todo en una sola con Promise.allSetled
-     await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
+      await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
 
       //retornamos algo para que se entere el frontend jeje
       return res.send(`${user.name} cuenta confirmada correctamente`);
@@ -115,7 +116,10 @@ export class AuthController {
         return res.status(401).json({ error: error.message });
       }
 
-      res.send("Autenticando decadentemente...");
+      //Es hora de JWT para Autenticar
+      const token = generateJwt();
+
+      res.send(token);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
@@ -241,7 +245,7 @@ export class AuthController {
       user.password = await passwordHash(password);
 
       //Escribimos en DB | guardar User y eliminar Token
-     await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
+      await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
 
       res.send("Password creado correctamente");
     } catch (error) {
