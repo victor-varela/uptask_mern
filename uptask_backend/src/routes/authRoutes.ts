@@ -2,7 +2,7 @@ import { request, response, Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { body, param } from "express-validator";
 import { handlerInputErrors } from "../middleware/validation";
-import { bgYellow } from "colors";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
 
@@ -29,7 +29,7 @@ router.post("/confirm-account",
     AuthController.confirmAccount
 )
 
-//Autenticar user | Login
+//Autenticar user | Login 
 router.post("/login",
     body("email").toLowerCase().isEmail().withMessage("Email no es valido"),
     body("password").notEmpty().withMessage("El password es obligatorio"),

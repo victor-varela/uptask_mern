@@ -36,7 +36,11 @@ export async function confirmAccount(formData: ConfirmToken) {
 export async function login(formData: UserLoginForm) {
   try {
     const { data } = await api.post<string>("auth/login", formData);
+
+    //la respuesta del controller es el JWT- lo seteamos en localStorage para usar en el Frontend
+    localStorage.setItem('AUTH_TOKEN', data)
     return data;
+    
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);

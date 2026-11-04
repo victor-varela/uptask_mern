@@ -116,9 +116,8 @@ export class AuthController {
         return res.status(401).json({ error: error.message });
       }
 
-      //Es hora de JWT para Autenticar
-      const token = generateJwt();
-
+      //Es hora de JWT para Autenticar | le envio el id de user | armo un obj - property id value user._id
+      const token = generateJwt({id: user._id});
       res.send(token);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });

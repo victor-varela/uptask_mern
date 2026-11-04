@@ -367,4 +367,8 @@ OJO: Nota que todos o casi todos los formularios deben tener un type definido de
 
 38- Desarrollamos la feature de cambiar password en el frontend ya con la API hecha para ello. Usamos useMutation
 
-39- Implementamos JWT para el login. JWT es lo mas popular para Autenticar y Autorizar. Esto lo hacemos en Login, una vez que paso la validacion en el BACKEND. AuthController.Login | Creamos la fn generateJWT en /utils | instalamos la dependencias jsonwebtoken y -D @types/jsonwebtoken | en la documentacion esta lo que usa jwt -> payload (la data que enviamos) | privateKey (la contraseña que creamos nosotros supersecreta) | options(hay vairas opciones la principal es cuando expiera el jwt- expires - ) jwt tiene 3 metodos : sign, verify, decode.s | Creamos una .env para la secret de JWT.
+39- Implementamos JWT para el login. JWT es lo mas popular para Autenticar y Autorizar. Esto lo hacemos en Login, una vez que paso la validacion en el BACKEND. AuthController.Login | Creamos la fn generateJWT en /utils | instalamos la dependencias jsonwebtoken y -D @types/jsonwebtoken | en la documentacion esta lo que usa jwt -> payload (la data que enviamos) | privateKey (la contraseña que creamos nosotros supersecreta) | options(hay vairas opciones la principal es cuando expiera el jwt- expires - ) jwt tiene 3 metodos : sign, verify, decode.s | Creamos una .env para la secret de JWT. El payload del JWT debe tener lo MINIMO que requiere el servidor para identificar a un usuario ==== ID
+
+Donde se guarda el JSWT ?? LocalStorage | Cookies --> usamos el LocalStorage, viejo conocido-- cada uno tiene ventajas y desventajas. En AuthAPI seteamos en LocalStorage el token -- auth_token - 
+
+40- Volvemos al backend para proteger las rutas-- con ayuda del JWT nuestra nueva mousekerramienta | en routes - createProject agregamos un nuevo middleware que creamos en /middleware/auth.ts --> authenticate

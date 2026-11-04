@@ -5,6 +5,7 @@ import { handlerInputErrors } from "../middleware/validation";
 import { TaskController } from "../controllers/TaskController";
 import { validateProject } from "../middleware/project";
 import { taskBelongsToProject, validateTask } from "../middleware/task";
+import { authenticate } from "../middleware/auth";
 
 //Instaciamos Router de express
 const router = Router();
@@ -21,9 +22,10 @@ router.get(
   ProjectController.getProjectById,
 );
 
-//Crear un Proyecto
+//Crear un Proyecto | Protegemos esta ruta con authenticate
 router.post(
   "/",
+  authenticate,
   //validamos express-validator [body(nombre del campo igual al esquema/modelo)]
   body("projectName").notEmpty().withMessage("El nombre del proyecto es obligatorio"),
   body("clientName").notEmpty().withMessage("El nombre del cliente es obligatorio"),
