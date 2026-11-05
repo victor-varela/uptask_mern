@@ -1,7 +1,7 @@
 ###Create Project
 POST http://localhost:4000/api/projects
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5MzgwMDMxMCwiZXhwIjoxNzkzODAwNjcwfQ.8-CSBbz_anAjEQ03FJIDmk7wNdG9Tr0E_cGPpZWGTis
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5MzkwMTA3NywiZXhwIjoxNzkzOTAxMjU3fQ.Su1f-xp4krgQsOCs4eHcFewWQF8H9D4coqCmfpnCEyc
 
 {
   "projectName": "Red Social Interna",
