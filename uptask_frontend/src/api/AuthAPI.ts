@@ -17,6 +17,8 @@ export async function createAccount(formData: UserLoginForm) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -29,6 +31,8 @@ export async function confirmAccount(formData: ConfirmToken) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -45,6 +49,8 @@ export async function login(formData: UserLoginForm) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -57,6 +63,8 @@ export async function requestNewCode(formData: RequestConfirmationCodeForm) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -69,6 +77,8 @@ export async function requestNewPassword(formData: ForgotPasswordForm) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -83,6 +93,8 @@ export async function validateToken(token: ConfirmToken) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -94,5 +106,7 @@ export async function updatePassword(formData: NewPasswordForm) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }

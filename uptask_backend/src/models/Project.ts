@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, PopulatedDoc, Types } from "mongoose";
 import { ITask } from "./Task";
+import { IUser } from "./User";
 
 //Definimos el Type- conectamos nuestro campo con el Document de mongoose del modelo para tener los utility types de TS
 export interface IProject extends Document {
@@ -11,6 +12,9 @@ export interface IProject extends Document {
   //agregamos tareaSS plural en el modelo. Definimos aca el type de estas tareas- Las tareas tienen otros campos (nombre, descripcion, etc.. para poder acceder a esos campos conocidos como 'subdocumentos' debemos darle y type que Ts reconozca por eso es el populatedDoc<Itask> & Document). [] al final porque es array de tareas
 
   tasks: PopulatedDoc<ITask & Document>[];
+
+  //agregamos un manager a cada proyecto- asociado a un usuario | IUser tiene por defecto un id que es lo que usamos. No es arreglo porque un solo manager tiene el proyecto
+  manager: PopulatedDoc<IUser & Document>
 }
 
 // Definimos el Schema con mongoose
@@ -37,6 +41,10 @@ export const ProjectSchema = new Schema(
         ref: "Task",
       },
     ],
+    manager:{
+      type: Types.ObjectId,
+        ref: "User",
+    }
   },
   { timestamps: true },
 );

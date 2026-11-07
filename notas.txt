@@ -371,4 +371,7 @@ OJO: Nota que todos o casi todos los formularios deben tener un type definido de
 
 Donde se guarda el JSWT ?? LocalStorage | Cookies --> usamos el LocalStorage, viejo conocido-- cada uno tiene ventajas y desventajas. En AuthAPI seteamos en LocalStorage el token -- auth_token - 
 
-40- Volvemos al backend para proteger las rutas-- con ayuda del JWT nuestra nueva mousekerramienta | en routes - createProject agregamos un nuevo middleware que creamos en /middleware/auth.ts --> authenticate
+40- Volvemos al backend para proteger las rutas-- con ayuda del JWT nuestra nueva mousekerramienta | en routes - createProject agregamos un nuevo middleware que creamos en /middleware/auth.ts --> authenticate | escribimos en el objeto request para pasar data entre middlewares |
+
+41- Debemos referenciar ahora cada proyecto a un usuario - atar project / user - para mostrar solo los proyectos que ese user tiene - esto cambia el CRUD de projects, se debe incorporar la data del manager (usuario que creo el proyecto) para las acciones del CRUD- En el modelo Project agregamos la nueva propiedad = manager y ajustamos/asignamos en los controller esa nueva propiedad. 
+En create project sera: user.manager = req.user.id

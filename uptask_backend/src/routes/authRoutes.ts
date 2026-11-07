@@ -2,7 +2,6 @@ import { request, response, Router } from "express";
 import { AuthController } from "../controllers/AuthController";
 import { body, param } from "express-validator";
 import { handlerInputErrors } from "../middleware/validation";
-import { authenticate } from "../middleware/auth";
 
 const router = Router();
 

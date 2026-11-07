@@ -63,6 +63,10 @@ export class ProjectController {
     //Primero lo instanciamos
     const project = new Project(req.body);
 
+    //Asignamos manager al proyecto | El modelo ya tiene esa propiedad. la asignamos con la data que viajo por el req.
+    project.manager = req.user._id
+    
+
     // if(true){
     //   const error = new Error('Proyecto no encontrado')
     //   return res.status(404).json({error:error.message})

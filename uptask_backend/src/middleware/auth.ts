@@ -1,6 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/User";
+import User, { IUser } from "../models/User";
+
+//hacemos el conjuro mouskerramienta magica para escribir en el objeto request | usamos interface para heredar todo lo que tiene req y agregar la propiedad user | el ? es porque puede ir o no esa propiedad en cada request | usamos interfacer para no perder lo que esta escrito y heredar o extender el objeto
+declare global {
+  namespace Express {
+    interface Request {
+      user?: IUser;
+    }
+  }
+}
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   const bearer = req.headers.authorization;
@@ -17,9 +26,15 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
     //Aseguramos la condicion que debe tener decoded y si es asi--> Error
     if (typeof decoded === "object" && decoded.id) {
-      //instaciamos user - vamos a la DB - await | buscamos por id
-      const user = await User.findById(decoded.id);
-      console.log(user);
+      //instaciamos user - vamos a la DB - await | buscamos por id y SELECCIONAMOS lo que queremos id name email no todo lo que tiene user en la DB, el password queda OUT
+      const user = await User.findById(decoded.id).select('id name email');
+
+      //verificamos que user exista, sino retornamos token no valido | asignamos user al objeto request
+      if (user) {
+        req.user = user;
+      } else {
+        res.status(500).json("Token no valido");
+      }
     }
   } catch (error) {
     res.status(500).json({ error: "Token no valido" });
@@ -44,5 +59,8 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
  * 
  *
  * jwt.verify toma 2 argumentos el token que va a decodificar y la secretKey -- esa esta en .env
+ * 
+ * Volvemos a usar la super mouskerramienta---->> escribir en el objeto request con declare global{namespace Express .... etc} POR QUE? porque asi tenemos un lugar donde PASAR DATA entre los middlewares--> tenemos routes para auth y para projects. Cada ruta al final llama a un metodo de un controller - es ahí, en los métodos donde USAMOS LA DATA que vamos pasando a traves del objeto request.
+ * 
  *  
  */

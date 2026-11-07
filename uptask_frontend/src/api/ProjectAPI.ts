@@ -11,6 +11,8 @@ export async function createProject(formData: ProjectFormData) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -26,6 +28,8 @@ export async function getProjects() {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -37,6 +41,8 @@ export async function editProjectById(id: Project["_id"]) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 type UpdateProjectType = {
@@ -51,6 +57,8 @@ export async function updateProject({ projectId, formData }: UpdateProjectType) 
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
@@ -62,6 +70,8 @@ export async function deleteProject(id: Project["_id"]) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error);
     }
+    //si hay error de red o servidor
+    throw error
   }
 }
 
