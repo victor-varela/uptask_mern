@@ -375,3 +375,7 @@ Donde se guarda el JSWT ?? LocalStorage | Cookies --> usamos el LocalStorage, vi
 
 41- Debemos referenciar ahora cada proyecto a un usuario - atar project / user - para mostrar solo los proyectos que ese user tiene - esto cambia el CRUD de projects, se debe incorporar la data del manager (usuario que creo el proyecto) para las acciones del CRUD- En el modelo Project agregamos la nueva propiedad = manager y ajustamos/asignamos en los controller esa nueva propiedad. 
 En create project sera: user.manager = req.user.id
+
+42- Adaptamos el proyecto en funcion a la "autorización": puedes hacer esto?- ya implementamos Autenticacion: eres quien dices ser? 
+
+43- En la ruta getAllProjects agregamos el middleware para proteger el endpoint y asegurar que user este autenticado. En el controller getAllProjects escribimos el condicional para que mongoose traiga los projects del manager quien esta autorizado.

@@ -6,7 +6,13 @@ export class ProjectController {
   //obtener todos los proyectos
   static getAllProjects = async (req: Request, res: Response) => {
     try {
-      const projects = await Project.find({}); //tiene un objeto (  {}  ) porque se van a agregar params para buscar proyectos mas adelante
+      const projects = await Project.find({
+        $or:[
+          {
+            manager: {$in: req.user._id}
+          }
+        ]
+      }); //tiene un objeto (  {}  ) porque se van a agregar params para buscar proyectos mas adelante | llego el momento de agregar params o condiciones para lo que va a buscar mongoose. Debemos buscar los projects que user este "autorizado" $or:[ { manager: { $in: req.user._id } } ]
       res.json(projects);
     } catch (error) {
       console.log(error);
@@ -134,4 +140,16 @@ export class ProjectController {
  *
 
  En el ROUTER esta el inicio del CRUD, ACA en controller esta la LOGICA-- ROUTER -> RUtea | Controller -> Ejecuta logica
+ *
+ * Empezamos a usar filtros de mongoose para traer datos de la DB-- getAllProjects tiene: 
+ * 
+ *    $or:[
+          {
+            manager: {$in: req.user._id}
+          }
+        ]
+ * 
+ * 
+ * 
+ * 
  */

@@ -1,11 +1,19 @@
 ###Create Project
 POST http://localhost:4000/api/projects
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5NDA3NDQ0OCwiZXhwIjoxODA5NjI2NDQ4fQ.8iZcZ2hT8POc6iZvhJ9x6-n6mUxQYFLMg9eWg2XvyGo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhZDRiNGNkMDA5NWRhZmUwMzllZDZiMyIsImlhdCI6MTc5NDEzOTg0OSwiZXhwIjoxODA5NjkxODQ5fQ.emQjrOVk4kTea7k-yQEF0RJ9b7r4Pwn0su6eyxB63Kk
 
 {
-  "projectName": "Red Social Interna",
+  "projectName": "Aplicacion Movil",
   "clientName": "Corporación Atlántica",
   "description": "Plataforma de comunicación interna para equipos de trabajo"
 }
+
+###Get all projects
+GET  http://localhost:4000/api/projects
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5NDE0MDk5NiwiZXhwIjoxODA5NjkyOTk2fQ.4G0c9ccshZ3qpUZdFAOqG5gqI2SxZ_dj-6BSWxE9sgo
+
+
+
 

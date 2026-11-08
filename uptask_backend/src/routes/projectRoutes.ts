@@ -10,8 +10,8 @@ import { authenticate } from "../middleware/auth";
 //Instaciamos Router de express
 const router = Router();
 
-//Obtener todos los proyectos
-router.get("/", ProjectController.getAllProjects);
+//Obtener todos los proyectos | agregamos middleware de autenticacion para proteger endpoint
+router.get("/", authenticate, ProjectController.getAllProjects);
 
 //Obtener proyecto por Id
 router.get(
