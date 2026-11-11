@@ -10,8 +10,11 @@ import { authenticate } from "../middleware/auth";
 //Instaciamos Router de express
 const router = Router();
 
-//Obtener todos los proyectos | agregamos middleware de autenticacion para proteger endpoint
-router.get("/", authenticate, ProjectController.getAllProjects);
+//Agregamos middleware de autenticacion para proteger TODOS los endpoints con .use()
+router.use(authenticate)
+
+//Obtener todos los proyectos 
+router.get("/", ProjectController.getAllProjects);
 
 //Obtener proyecto por Id
 router.get(
@@ -25,7 +28,6 @@ router.get(
 //Crear un Proyecto | Protegemos esta ruta con authenticate
 router.post(
   "/",
-  authenticate,
   //validamos express-validator [body(nombre del campo igual al esquema/modelo)]
   body("projectName").notEmpty().withMessage("El nombre del proyecto es obligatorio"),
   body("clientName").notEmpty().withMessage("El nombre del cliente es obligatorio"),

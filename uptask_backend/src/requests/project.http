@@ -15,5 +15,25 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5NDE0MDk5NiwiZXhwIjoxODA5NjkyOTk2fQ.4G0c9ccshZ3qpUZdFAOqG5gqI2SxZ_dj-6BSWxE9sgo
 
 
+###Get projectById
+GET  http://localhost:4000/api/projects/6aef6bcf1f7c7325e52f7fe1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5NDQwMTc5OCwiZXhwIjoxODA5OTUzNzk4fQ.D12hN2-kn_1FWOf8EKeLHz7BPc_0kXDxhyr3vonI00A
+
+###Update project
+PUT http://localhost:4000/api/projects/6aef6bcf1f7c7325e52f7fe1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5NDQwMTc5OCwiZXhwIjoxODA5OTUzNzk4fQ.D12hN2-kn_1FWOf8EKeLHz7BPc_0kXDxhyr3vonI00A
+
+{
+  "projectName": "Aplicacion Movil-Updated",
+  "clientName": "Corporación Atlántica-Updated",
+  "description": "Plataforma de comunicación interna para equipos de trabajo-Updated"
+}
+
+###Delete project
+DELETE   http://localhost:4000/api/projects/6aef6bcf1f7c7325e52f7fe1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhY2UzMmFhMjA3ZmQyN2MxOWU3ZjA2MSIsImlhdCI6MTc5NDQwMTc5OCwiZXhwIjoxODA5OTUzNzk4fQ.D12hN2-kn_1FWOf8EKeLHz7BPc_0kXDxhyr3vonI00A
 
 

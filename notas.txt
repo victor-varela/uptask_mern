@@ -379,3 +379,4 @@ En create project sera: user.manager = req.user.id
 42- Adaptamos el proyecto en funcion a la "autorización": puedes hacer esto?- ya implementamos Autenticacion: eres quien dices ser? 
 
 43- En la ruta getAllProjects agregamos el middleware para proteger el endpoint y asegurar que user este autenticado. En el controller getAllProjects escribimos el condicional para que mongoose traiga los projects del manager quien esta autorizado.
+44- En getProjectById == validamos si corresponde el project.manager con req.user._id --> esto lo repetimos en todo el CRUD de project

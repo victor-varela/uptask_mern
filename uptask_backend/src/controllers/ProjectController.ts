@@ -24,9 +24,19 @@ export class ProjectController {
     const { id } = req.params;
     try {
       const project = await Project.findById(id).populate("tasks");
-      //chequear id 'malicioso o parecido a un id de mongo pero invalido ej:69e8e54b27fab011dfcdc1310 borre el ultimo digito y coloque un 0. Si no se valida tira null--> ahi RETORNAMOS == return para no romper la app '
+      //chequear id 'malicioso o parecido a un id de mongo pero invalido ej:69e8e54b27fab011dfcdc1310 borre el ultimo digito y coloque un 0. Si no se valida tira null--> ahi RETORNAMOS == return para no romper la app '-- el formato del id ya se validó en la ruta; acá solo falta ver si existe.
+
+      //PRIMERO- ver si existe project
       if (!project) {
         const error = new Error("Proyecto no encontrado");
+        return res.status(404).json({ error: error.message });
+      }
+
+      //DESPUES -Verificamos "autorizacion" 
+
+          //.toString porque ._id son ObjectId de mongoDb
+      if(project.manager.toString() !== req.user._id.toString()){
+        const error = new Error("Accion no valida");
         return res.status(404).json({ error: error.message });
       }
       res.json(project);
@@ -51,6 +61,12 @@ export class ProjectController {
       if (!project) {
         const error = new Error("Proyecto no encontrado");
         return res.status(404).send({ error: error.message });
+      }
+
+      //verificamos autorizacion
+      if(project.manager.toString() !== req.user._id.toString()){
+        const error = new Error('Accion no Valida. Solo el Manager puede realizar esta accion.')
+        return res.status(404).json({error: error.message})
       }
       //Asignamos manualmente
       project.projectName = projectName;
@@ -100,7 +116,11 @@ export class ProjectController {
       }
 
       //Aca van verificaciones previas a eliminar: si user tiene los permisos, etc..
-
+      //verificamos autorizacion
+      if(project.manager.toString() !== req.user._id.toString()){
+        const error = new Error('Accion no Valida. Solo el Manager puede realizar esta accion.')
+        return res.status(404).json({error: error.message})
+      }
       // aca obtenemos los campos manualmente
 
       await project.deleteOne();
@@ -150,6 +170,7 @@ export class ProjectController {
         ]
  * 
  * 
+ * const project = await Project.findById(id).populate("tasks"); .populate trae todas las TAREAS asociadas al proyecto sin ese metodo trajera los IDs de las tareas.
  * 
  * 
  */
