@@ -18,13 +18,13 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     return res.status(401).json({ error: error.message });
   }
 
-  const token = bearer.split(" ")[1];
+  const token = bearer.split(" ")[1]; //lo que esta despues del espacio " " despues de bearer es el token.
 
   //decodificamos el token | Usamos el metodo de JWT - verify (token, secretKey) sale hoverando | vamos a la DB -> tryCatch - buscamos user por id |
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    //Aseguramos la condicion que debe tener decoded y si es asi--> Error
+    //Aseguramos la condicion que debe tener decoded para que Ts no se queje y si no es asi--> Error
     if (typeof decoded === "object" && decoded.id) {
       //instaciamos user - vamos a la DB - await | buscamos por id y SELECCIONAMOS lo que queremos id name email no todo lo que tiene user en la DB, el password queda OUT
       const user = await User.findById(decoded.id).select('id name email');

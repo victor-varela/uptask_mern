@@ -12,15 +12,15 @@ export async function createProject(formData: ProjectFormData) {
       throw new Error(error.response.data.error);
     }
     //si hay error de red o servidor
-    throw error
+    throw error;
   }
 }
 
 export async function getProjects() {
   try {
+    //para pasar el token en axios usamos el obj de configuracion / la forma que se envia es como luego se va a decodificar en el middleware authenticate--
     const { data } = await api("/projects");
-    console.log(data);
-    
+
     //validamos la respuesta-> uso el schema de dashboardView
     const response = dashboardViewSchema.safeParse(data);
     if (response.success) {
@@ -31,7 +31,7 @@ export async function getProjects() {
       throw new Error(error.response.data.error);
     }
     //si hay error de red o servidor
-    throw error
+    throw error;
   }
 }
 
@@ -44,7 +44,7 @@ export async function editProjectById(id: Project["_id"]) {
       throw new Error(error.response.data.error);
     }
     //si hay error de red o servidor
-    throw error
+    throw error;
   }
 }
 type UpdateProjectType = {
@@ -60,7 +60,7 @@ export async function updateProject({ projectId, formData }: UpdateProjectType) 
       throw new Error(error.response.data.error);
     }
     //si hay error de red o servidor
-    throw error
+    throw error;
   }
 }
 
@@ -73,7 +73,7 @@ export async function deleteProject(id: Project["_id"]) {
       throw new Error(error.response.data.error);
     }
     //si hay error de red o servidor
-    throw error
+    throw error;
   }
 }
 
@@ -84,6 +84,18 @@ export async function deleteProject(id: Project["_id"]) {
  * Para la Fn getProjects, usamos el schema de dashboardView para validar que la respuesta tiene los campos y los types correctos, eso elimina los any que teniamos en DashboardView.ts. nos aseguramos que pasen la validacion de ZOD y ahi Retornamos la respuesta ya validada a la vista. sintaxis===== dashboardViewSchema.safeParse(data) SAFEPARSE°°°
  *
  * Para editProjectById usamos lookup del type Project ==> editProjectById(id:Project['_id'])- la url es la MISMA que definimos en el BACKEND. las URLs de las funcines que llaman a la API son OBVIAMENTE las mismas que definimos en el Backend, me habia confundido y puse la URL del frontend en su lugar instead.
+ *
+ * getProjects es la única que devuelve una lista de datos que la vista tiene que dibujar, así que Zod garantiza que lleguen con los campos y tipos correctos (y elimina los any). Las demás solo devuelven un mensaje de texto (crear, actualizar, borrar), por lo que no hay estructura que validar; editProjectById sí devuelve un proyecto y podría validarse también.
+ *
+ * Las rutas de projects son rutas AUTORIZADAS- siempre van con el bearer token que en cada llamada a la api se puede escribir:
+ *
+ *          await api.get("/projects",{
+ *                          headers:{
+ *                              Authorization: `Bearer ${token}`
+ *                                      }
+ *                                   })
+ *
+ * PEEERO hay una forma de hacerlo SIN REPETIR el codigo: Interceptor de AXIOS==> hay 2 tipos request / response . Request interceptor es para acciones ANTES de la peticion HTTP y response es para DESPUES de la peticion. | Lo configuramos en src/lib -- donde esta el cliente axios que creamos.
  *
  *
  */
